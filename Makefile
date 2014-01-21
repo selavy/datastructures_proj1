@@ -1,0 +1,23 @@
+CPP = g++
+CFLAGS = -Wall -Werror -pedantic -ansi -g -frepo
+
+OBJS = main.o Exception.o # LinkedList.o # Polynomial.o
+TEMPLATES = LinkedList.hpp Node.hpp DecreasingOrderSort.hpp IncreasingOrderSort.hpp FIFOSort.hpp
+
+proj1: $(OBJS) $(TEMPLATES)
+	$(CPP) $(CFLAGS) $(OBJS) -o proj1
+main.o: main.cpp
+	$(CPP) -c $(CFLAGS) main.cpp
+Polynomial.o: Polynomial.hpp Polynomial.cpp
+	$(CPP) -c $(CFLAGS) Polynomial.cpp
+Exception.o: Exception.hpp Exception.cpp
+	$(CPP) -c $(CFLAGS) Exception.cpp
+
+# These were moved to templates so don't need to compile
+#LinkedList.o: LinkedList.hpp LinkedList.cpp
+#	$(CPP) -c $(CFLAGS) LinkedList.cpp
+#Node.o: Node.hpp Node.cpp
+#	$(CPP) -c $(CFLAGS) Node.cpp
+
+clean:
+	rm -rf *.o *.rpo proj1
