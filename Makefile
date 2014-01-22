@@ -2,7 +2,7 @@ CPP = g++
 CFLAGS = -Wall -Werror -pedantic -ansi -g -frepo
 
 OBJS = main.o Exception.o Polynomial.o # LinkedList.o 
-EMPLATES = LinkedList.hpp Node.hpp DecreasingOrderSort.hpp IncreasingOrderSort.hpp FIFOSort.hpp DecreasingOrderExpSort.hpp
+TEMPLATES = LinkedList.hpp Node.hpp DecreasingOrderSort.hpp IncreasingOrderSort.hpp FIFOSort.hpp UseNew.hpp UseNodeList.hpp
 HEADERS = Term.hpp
 
 proj1: $(OBJS)

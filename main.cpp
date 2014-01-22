@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstring>
 #include "Polynomial.hpp"
+#include "UseNodeList.hpp"
 
 using namespace std;
 
@@ -23,6 +24,10 @@ void printAll();
 
 int main( int argc, char ** argv )
 {
+  
+  LinkedList::LinkedList<Term, SortingPolicies::IncreasingOrderSort, AllocationPolicies::UseNodeList> aList;
+  return 0;
+
   ifstream in;
   if( argc == 2 )
     {

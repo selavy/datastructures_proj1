@@ -3,6 +3,7 @@
 
 #include "Node.hpp"
 #include "IncreasingOrderSort.hpp"
+#include "UseNew.hpp"
 #include "Exception.hpp"
 
 namespace LinkedList {
@@ -10,8 +11,8 @@ namespace LinkedList {
   template
   <
     class T,
-    template <class> class SortingPolicy = SortingPolicies::IncreasingOrderSort /*,
-										  template <class> class AllocationPolicy = AllocationPolicies::UseNodeList */
+    template <class> class SortingPolicy = SortingPolicies::IncreasingOrderSort,
+    template <class> class AllocationPolicy = AllocationPolicies::UseNew
   >
   class LinkedList {
   public:
@@ -24,7 +25,7 @@ namespace LinkedList {
     virtual ~LinkedList() {
       delete _head;
     } /* end ~LinkedList() */
-
+ 
     bool isEmpty() {
       return (_head == NULL) ? true : false;
     }
@@ -32,14 +33,14 @@ namespace LinkedList {
     void insert( const T& val ) {
       if( _head == NULL )
 	{
-	  _head = new Node<T>( val );
+	  _head = AllocationPolicy<T>::newNode( val ); /* new Node<T>( val ); */
 	  return;
 	}
 
       Node<T> * node = _head;
       if( SortingPolicy<T>( val, node->data() ) )
 	{
-	  Node<T> * newNode = new Node<T>( val, _head );
+	  Node<T> * newNode =  AllocationPolicy<T>::newNode( val, _head ); /* new Node<T>( val, _head ); */
 	  _head = newNode;
 	  return;
 	}
@@ -48,7 +49,7 @@ namespace LinkedList {
 	{
 	  if( SortingPolicy<T>::putBefore( val, node->next()->data() ) )
 	    {
-	      Node<T> * newNode = new Node<T>( val, node->next() );
+	      Node<T> * newNode = AllocationPolicy<T>::newNode( val, node->next() ); /* new Node<T>( val, node->next() ); */
 	      node->_next = newNode;
 	      return;
 	    }
@@ -56,7 +57,7 @@ namespace LinkedList {
 	}
 
       /* putting the node at the end of the list */
-      node->_next = new Node<T>( val );
+      node->_next = AllocationPolicy<T>::newNode( val ); /* new Node<T>( val ); */
       return;
     } /* end insert() */
 
@@ -104,7 +105,7 @@ namespace LinkedList {
 	_status = NOP;
       }
       
-      iterator(const typename LinkedList<T, SortingPolicy>::iterator& it) {
+      iterator(const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& it) {
 	_iter = it._iter;
 	_status = it._status;
       }
@@ -137,6 +138,10 @@ namespace LinkedList {
 	return _iter->data();
       }
 
+      Node<T> * getIter() {
+	return _iter;
+      }
+
       void setIter(Node<T> * node) {
 	_iter = node;
         _status = (node != NULL) ? MIDDLE : END;
@@ -146,7 +151,7 @@ namespace LinkedList {
 	_status = status;
       }
 
-      typename LinkedList<T, SortingPolicy>::iterator& operator=( const typename LinkedList<T, SortingPolicy>::iterator& rhs ) {
+      typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& operator=( const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& rhs ) {
 	if( this == &rhs )
 	  return *this;
 	else
@@ -157,24 +162,24 @@ namespace LinkedList {
 	  }
       }
 
-      bool operator==( const typename LinkedList<T, SortingPolicy>::iterator& rhs ) {
+      bool operator==( const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& rhs ) {
 	if( (_status == BEGIN) && (rhs._status == BEGIN) ) return true;
 	else if( (_status == END) && (rhs._status == END) ) return true;
 	else if( _iter == rhs._iter ) return true;
 	else return false;
       }
 
-      bool operator!=( const typename LinkedList<T, SortingPolicy>::iterator& rhs ) {
+      bool operator!=( const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& rhs ) {
 	return !(*this == rhs);
       }
 
-      typename LinkedList<T, SortingPolicy>::iterator operator++() {
+      typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator operator++() {
 	forward();
 	return *this;
       }
 
-      typename LinkedList<T, SortingPolicy>::iterator operator++(int) {
-	typename LinkedList<T, SortingPolicy>::iterator t(*this); // save obj
+      typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator operator++(int) {
+	typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator t(*this); // save obj
 	forward();
 	return t;
       }
@@ -183,13 +188,11 @@ namespace LinkedList {
 	return _iter;
       }
       
-      void insertAfter( const typename LinkedList<T, SortingPolicy>::iterator& itr, T& val ) {
-	Node<T> * newNode = new Node<T>( val );
+      void insertAfter( const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& itr, T& val ) {
+	Node<T> * newNode = AllocationPolicy<T>::newNode( val ); /* new Node<T>( val ); */
 	newNode._next = itr._iter;
 	itr._iter = newNode;
       }
-
-
 
     private:
       Node<T> * _iter;
@@ -197,19 +200,25 @@ namespace LinkedList {
     };
     /************************************************/
 
-    typename LinkedList<T, SortingPolicy>::iterator& begin() {
+    typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& begin() {
       _begin.setIter( _head );
       return _begin;
     }
 
-    typename LinkedList<T, SortingPolicy>::iterator& end() {
+    typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& end() {
       return _end;
+    }
+
+    void remove( typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& it ) {
+      Node<T> * node = it.getIter();
+      /* TODO */
+      
     }
 
   private:
     Node<T> * _head;
-    typename LinkedList<T, SortingPolicy>::iterator _begin;
-    typename LinkedList<T, SortingPolicy>::iterator _end;
+    typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator _begin;
+    typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator _end;
   };
 
 }
