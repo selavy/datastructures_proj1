@@ -1,6 +1,9 @@
 #ifndef _LINKEDLIST_HPP_
 #define _LINKEDLIST_HPP_
 
+#include <iostream>
+using namespace std;
+
 #include "Node.hpp"
 #include "IncreasingOrderSort.hpp"
 #include "UseNew.hpp"
@@ -25,6 +28,24 @@ namespace LinkedList {
     virtual ~LinkedList() {
       delete _head;
     } /* end ~LinkedList() */
+
+    void printVisual() {
+      Node<T> * node = _head;
+      while( node != NULL )
+	{
+	  if( node->prev() != NULL )
+	    cout << "<-";
+	  else
+	    cout << "|-";
+	  cout << node->data();
+	  if( node->next() != NULL )
+	    cout << "->";
+	  else
+	    cout << "-|";
+	  node = node->next();
+	}
+      cout << endl;
+    }
  
     bool isEmpty() {
       return (_head == NULL) ? true : false;
@@ -33,21 +54,22 @@ namespace LinkedList {
     void insert( const T& val ) {
       if( _head == NULL )
 	{
-	  _head = AllocationPolicy<T>::newNode( val ); /* new Node<T>( val ); */
+	  _head = AllocationPolicy<T>::newNode( val );
 	  return;
 	}
 
       Node<T> * node = _head;
       if( SortingPolicy<T>::putBefore( val, node->data() ) )
 	{
-	  Node<T> * newNode =  AllocationPolicy<T>::newNode( val, _head ); /* new Node<T>( val, _head ); */
+	  Node<T> * newNode =  AllocationPolicy<T>::newNode( val, _head );
+	  _head->_prev = newNode;
 	  _head = newNode;
 	  return;
 	}
 
       while( node->next() != NULL )
 	{
-	  if( SortingPolicy<T>::putBefore( val, node->next()->data() ) /* putBefore( val, node->next()->data() ) */ )
+	  if( SortingPolicy<T>::putBefore( val, node->next()->data() ) )
 	    {
 	      Node<T> * newNode = AllocationPolicy<T>::newNode( val, node->next(), node ); /* new Node<T>( val, node->next() ); */
 	      node->next()->_prev = newNode;
@@ -216,7 +238,7 @@ namespace LinkedList {
       if( next != NULL )
 	next->_prev = prev;
 
-      AllocationPolicy<T>::removeNode( next );
+      AllocationPolicy<T>::removeNode( node );
     }
 
     void remove( int index ) {

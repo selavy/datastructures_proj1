@@ -33,7 +33,11 @@ int main( int argc, char ** argv )
   aList.insert(1);
   aList.insert(25);
   aList.insert(20);
+  cout << "Before remove..." << endl;
+  aList.printVisual();
   aList.remove(2);
+  cout << "After remove..." << endl;
+  aList.printVisual();
 
   for( int i = 0; i < aList.size(); ++i )
     cout << aList.get(i) << " ";
