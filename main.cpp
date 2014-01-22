@@ -42,6 +42,10 @@ int main( int argc, char ** argv )
       return 1;
     }
 
+  /* initialize polynomial array pointers */
+  for( int i = 0; i < nArrs; ++i )
+    poly_list[i] = NULL;
+
   /* I am going to assume that the input file is correctly formatted */
   int N;
   in >> N;
@@ -52,7 +56,9 @@ int main( int argc, char ** argv )
       poly_list[N] = new Polynomial( line );
     }
 
-  while( in.good() )
+  bool quit = false;
+
+  while( in.good() && !quit )
     {
       char line[SLEN];
       cin.getline( line, SLEN );
@@ -98,10 +104,17 @@ int main( int argc, char ** argv )
 	case 'Q':
 	case 'q':
 	  printAll();
-	  return 0;
+	  quit = true;
 	default:
 	  break;
 	}
+    }
+
+  /* deallocate memory */
+  for( int i = 0; i < nArrs; ++i )
+    {
+      if( poly_list[i] != NULL )
+	delete poly_list[i];
     }
 
   return 0;

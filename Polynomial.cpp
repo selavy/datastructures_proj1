@@ -41,3 +41,6 @@ void Polynomial::integrate() {
 
 void Polynomial::clear() {
 }
+
+void Polynomial::print() {
+}

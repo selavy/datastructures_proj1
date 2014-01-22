@@ -10,7 +10,8 @@ namespace LinkedList {
   template
   <
     class T,
-    template <class> class SortingPolicy = SortingPolicies::IncreasingOrderSort
+    template <class> class SortingPolicy = SortingPolicies::IncreasingOrderSort /*,
+										  template <class> class AllocationPolicy = AllocationPolicies::UseNodeList */
   >
   class LinkedList {
   public:
@@ -27,7 +28,7 @@ namespace LinkedList {
     bool isEmpty() {
       return (_head == NULL) ? true : false;
     }
-
+    
     void insert( const T& val ) {
       if( _head == NULL )
 	{
@@ -36,7 +37,7 @@ namespace LinkedList {
 	}
 
       Node<T> * node = _head;
-      if( SortingPolicy<T>::putBefore( val, node->data()) )
+      if( SortingPolicy<T>( val, node->data() ) )
 	{
 	  Node<T> * newNode = new Node<T>( val, _head );
 	  _head = newNode;

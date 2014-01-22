@@ -6,7 +6,7 @@ namespace SortingPolicies {
   template <class T>
   struct FIFOSort
   {
-    static bool putBefore( const T& a, const T& b ) {
+    bool operator() (const T& a, const T& b) {
       return false;
     }
   };

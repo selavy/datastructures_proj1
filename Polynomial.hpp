@@ -19,6 +19,7 @@ public:
   void differentiate();
   void integrate();
   void clear();
+  void print();
 
 private:
   LinkedList::LinkedList<Term> _list;
