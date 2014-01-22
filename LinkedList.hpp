@@ -16,6 +16,8 @@ namespace LinkedList {
   public:
     explicit LinkedList() {
       _head = NULL;
+      _begin.setStatus(iterator::BEGIN);
+      _end.setStatus(iterator::END);
     } /* end LinkedList() */
 
     virtual ~LinkedList() {
@@ -87,41 +89,116 @@ namespace LinkedList {
       return count;
     }
 
+    int length() {
+      return size();
+    }
+
     /************************************************/
-    /*
     class iterator
     {
     public:
-      enum Status { begin = 0, end, middle };
+      enum Status { BEGIN = 0, END, MIDDLE };
     public:
       explicit iterator() {
+	_iter = NULL;
+	_status = BEGIN;
+      }
+      
+      explicit iterator(const typename LinkedList<T>::iterator& it) {
+	_iter = it.getData();
+	_status = it.getStatus();
       }
 
       virtual ~iterator() {
       }
       
       void forward() {
+	if( _status == BEGIN ) {
+	  _iter = _head;
+	  _status = MIDDLE;
+	  return;
+	}
+	
+	if( _status == END )
+	  return;
+	  
+	if( _iter->next() != NULL )
+	  _iter->next();
+	else
+	  {
+	    _iter = NULL;
+	    _status = END;
+	  }
       }
 
-      static iterator begin() {
-	return _begin;
+      const T& getData() {
+	return _iter->data();
       }
 
-      static iterator end() {
-	return _end;
+      Status getStatus() {
+	return _status;
+      }
+
+      void setIter(Node<T> * node) {
+	_iter = node;
+        _status = (node != NULL) ? MIDDLE : END;
+      }
+
+      void setStatus(Status status) {
+	_status = status;
+      }
+
+      typename LinkedList<T>::iterator& operator=( const typename LinkedList<T>::iterator& rhs ) {
+	if( this == &rhs )
+	  return *this;
+	else
+	  {
+	    _iter = rhs._data;
+	    _status = rhs._status;
+	    return *this;
+	  }
+      }
+
+      bool operator==( const typename LinkedList<T>::iterator& rhs ) {
+	if( (_status == BEGIN) && (rhs._status == BEGIN) ) return true;
+	else if( (_status == END) && (rhs._status == END) ) return true;
+	else if( _iter == rhs._iter ) return true;
+	else return false;
+      }
+
+      bool operator!=( const typename LinkedList<T>::iterator& rhs ) {
+	return !(*this == rhs);
+      }
+
+      typename LinkedList<T>::iterator operator++() {
+	forward();
+	return *this;
+      }
+
+      typename LinkedList<T>::iterator operator++(int) {
+	typename LinkedList<T>::iterator t(*this); // save obj
+	forward();
+	return t;
       }
 
     private:
       Node<T> * _iter;
-      static const iterator _begin;
-      static const iterator _end;
       Status _status;
-    }
-    */
+    };
     /************************************************/
+
+    const typename LinkedList<T>::iterator& begin() {
+      return _begin;
+    }
+
+    const typename LinkedList<T>::iterator& end() {
+      return _end;
+    }
 
   private:
     Node<T> * _head;
+    typename LinkedList<T>::iterator _begin;
+    typename LinkedList<T>::iterator _end;
   };
 
 }
