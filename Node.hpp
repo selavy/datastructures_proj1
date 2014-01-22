@@ -1,10 +1,7 @@
 #ifndef _NODE_HPP_
 #define _NODE_HPP_
 
-#ifndef NULL
-#define NULL 0
-#endif
-
+#include "MyStd.hpp"
 #include <cstring>
 
 template <class T>
@@ -14,10 +11,12 @@ struct Node {
   virtual ~Node();
  
   struct Node * next();
+  struct Node * prev();
   const T& data();
 
   T* _data;
   struct Node * _next;
+  struct Node * _prev;
 };
 
 /* Since templates still don't really work, can't separate */
@@ -47,6 +46,11 @@ Node<T>::~Node() {
 template <class T>
 struct Node<T> * Node<T>::next() {
   return _next;
+}
+
+template <class T>
+struct Node<T> * Node<T>::prev() {
+  return _prev;
 }
 
 template <class T>

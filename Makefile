@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -pedantic -ansi -g -frepo
 
 OBJS = main.o Exception.o Polynomial.o # LinkedList.o 
 TEMPLATES = LinkedList.hpp Node.hpp DecreasingOrderSort.hpp IncreasingOrderSort.hpp FIFOSort.hpp UseNew.hpp UseNodeList.hpp
-HEADERS = Term.hpp
+HEADERS = Term.hpp MyStd.hpp
 
 proj1: $(OBJS)
 	$(CPP) $(CFLAGS) $(OBJS) -o proj1
