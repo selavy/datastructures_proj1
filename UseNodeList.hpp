@@ -17,7 +17,7 @@ namespace AllocationPolicies
   template <class T>
     struct UseNodeList {
 
-    static Node<T> * newNode( int val, Node<T> * nnode, Node<T> * pnode ) {
+    static Node<T> * newNode( const T& val, Node<T> * nnode, Node<T> * pnode ) {
       if( _head == NULL )
 	return new Node<T>( val, nnode, pnode );
       else
@@ -31,11 +31,11 @@ namespace AllocationPolicies
 	}
     }
 
-    static Node<T> * newNode( int val, Node<T> * nnode ) {
+    static Node<T> * newNode( const T& val, Node<T> * nnode ) {
       return newNode( val, nnode, NULL );
     }
       
-    static Node<T> * newNode( int val ) {
+    static Node<T> * newNode( const T& val ) {
       return newNode( val, NULL, NULL );
     }
 

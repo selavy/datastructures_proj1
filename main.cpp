@@ -25,14 +25,13 @@ void printAll();
 int main( int argc, char ** argv )
 {
   
-  LinkedList::LinkedList<int, SortingPolicies::IncreasingOrderSort, AllocationPolicies::UseNodeList> aList;
-  aList.insert(1);
-  aList.insert(2);
-  aList.insert(3);
-  aList.insert(5);
-  aList.insert(1);
-  aList.insert(25);
-  aList.insert(20);
+  LinkedList::LinkedList<Term, SortingPolicies::IncreasingOrderSort, AllocationPolicies::UseNodeList> aList;
+  for( int i = 0; i < 20; ++i )
+    {
+      Term term( i, 2*i );
+      aList.insert(term);
+    }
+
   cout << "Before remove..." << endl;
   aList.printVisual();
   aList.remove(2);
