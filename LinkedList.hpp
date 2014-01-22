@@ -31,7 +31,7 @@ namespace LinkedList {
     void insert( const T& val ) {
       if( _head == NULL )
 	{
-	  _head = new Node<T>(val);
+	  _head = new Node<T>( val );
 	  return;
 	}
 
@@ -67,7 +67,6 @@ namespace LinkedList {
       for( int i = 0; i < index; ++i )
 	{
 	  if( node == NULL ) throw Exception("Tried to access data beyond bounds of list");
-
 	  node = node->next();
 	}
 
@@ -97,33 +96,35 @@ namespace LinkedList {
     class iterator
     {
     public:
-      enum Status { BEGIN = 0, END, MIDDLE };
+      enum Status { NOP = 0, BEGIN, END, MIDDLE };
     public:
       explicit iterator() {
 	_iter = NULL;
-	_status = BEGIN;
+	_status = NOP;
       }
       
-      explicit iterator(const typename LinkedList<T>::iterator& it) {
-	_iter = it.getData();
-	_status = it.getStatus();
+      iterator(const typename LinkedList<T, SortingPolicy>::iterator& it) {
+	_iter = it._iter;
+	_status = it._status;
       }
 
       virtual ~iterator() {
       }
       
       void forward() {
-	if( _status == BEGIN ) {
-	  _iter = _head;
+	if( _status == NOP )
+	  return;
+	else if( _status == BEGIN ) {
 	  _status = MIDDLE;
 	  return;
 	}
-	
-	if( _status == END )
+	else if( _status == END ) {
 	  return;
-	  
-	if( _iter->next() != NULL )
-	  _iter->next();
+	}
+	else if( _iter->next() != NULL )
+	  {
+	    _iter = _iter->next();
+	  }
 	else
 	  {
 	    _iter = NULL;
@@ -135,10 +136,6 @@ namespace LinkedList {
 	return _iter->data();
       }
 
-      Status getStatus() {
-	return _status;
-      }
-
       void setIter(Node<T> * node) {
 	_iter = node;
         _status = (node != NULL) ? MIDDLE : END;
@@ -148,7 +145,7 @@ namespace LinkedList {
 	_status = status;
       }
 
-      typename LinkedList<T>::iterator& operator=( const typename LinkedList<T>::iterator& rhs ) {
+      typename LinkedList<T, SortingPolicy>::iterator& operator=( const typename LinkedList<T, SortingPolicy>::iterator& rhs ) {
 	if( this == &rhs )
 	  return *this;
 	else
@@ -159,27 +156,39 @@ namespace LinkedList {
 	  }
       }
 
-      bool operator==( const typename LinkedList<T>::iterator& rhs ) {
+      bool operator==( const typename LinkedList<T, SortingPolicy>::iterator& rhs ) {
 	if( (_status == BEGIN) && (rhs._status == BEGIN) ) return true;
 	else if( (_status == END) && (rhs._status == END) ) return true;
 	else if( _iter == rhs._iter ) return true;
 	else return false;
       }
 
-      bool operator!=( const typename LinkedList<T>::iterator& rhs ) {
+      bool operator!=( const typename LinkedList<T, SortingPolicy>::iterator& rhs ) {
 	return !(*this == rhs);
       }
 
-      typename LinkedList<T>::iterator operator++() {
+      typename LinkedList<T, SortingPolicy>::iterator operator++() {
 	forward();
 	return *this;
       }
 
-      typename LinkedList<T>::iterator operator++(int) {
-	typename LinkedList<T>::iterator t(*this); // save obj
+      typename LinkedList<T, SortingPolicy>::iterator operator++(int) {
+	typename LinkedList<T, SortingPolicy>::iterator t(*this); // save obj
 	forward();
 	return t;
       }
+
+      Node<T> * getNode() {
+	return _iter;
+      }
+      
+      void insertAfter( const typename LinkedList<T, SortingPolicy>::iterator& itr, T& val ) {
+	Node<T> * newNode = new Node<T>( val );
+	newNode._next = itr._iter;
+	itr._iter = newNode;
+      }
+
+
 
     private:
       Node<T> * _iter;
@@ -187,18 +196,19 @@ namespace LinkedList {
     };
     /************************************************/
 
-    const typename LinkedList<T>::iterator& begin() {
+    typename LinkedList<T, SortingPolicy>::iterator& begin() {
+      _begin.setIter( _head );
       return _begin;
     }
 
-    const typename LinkedList<T>::iterator& end() {
+    typename LinkedList<T, SortingPolicy>::iterator& end() {
       return _end;
     }
 
   private:
     Node<T> * _head;
-    typename LinkedList<T>::iterator _begin;
-    typename LinkedList<T>::iterator _end;
+    typename LinkedList<T, SortingPolicy>::iterator _begin;
+    typename LinkedList<T, SortingPolicy>::iterator _end;
   };
 
 }
