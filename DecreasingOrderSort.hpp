@@ -6,7 +6,7 @@ namespace SortingPolicies {
   template <class T>
   struct DecreasingOrderSort
   {
-    bool operator() (const T& a, const T& b) {
+    static bool putBefore (const T& a, const T& b) {
       return a < b;
     }
   };

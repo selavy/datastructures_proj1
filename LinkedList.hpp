@@ -38,7 +38,7 @@ namespace LinkedList {
 	}
 
       Node<T> * node = _head;
-      if( SortingPolicy<T>( val, node->data() ) )
+      if( SortingPolicy<T>::putBefore( val, node->data() ) )
 	{
 	  Node<T> * newNode =  AllocationPolicy<T>::newNode( val, _head ); /* new Node<T>( val, _head ); */
 	  _head = newNode;
@@ -47,9 +47,10 @@ namespace LinkedList {
 
       while( node->next() != NULL )
 	{
-	  if( SortingPolicy<T>::putBefore( val, node->next()->data() ) )
+	  if( SortingPolicy<T>::putBefore( val, node->next()->data() ) /* putBefore( val, node->next()->data() ) */ )
 	    {
-	      Node<T> * newNode = AllocationPolicy<T>::newNode( val, node->next() ); /* new Node<T>( val, node->next() ); */
+	      Node<T> * newNode = AllocationPolicy<T>::newNode( val, node->next(), node ); /* new Node<T>( val, node->next() ); */
+	      node->next()->_prev = newNode;
 	      node->_next = newNode;
 	      return;
 	    }
@@ -57,7 +58,7 @@ namespace LinkedList {
 	}
 
       /* putting the node at the end of the list */
-      node->_next = AllocationPolicy<T>::newNode( val ); /* new Node<T>( val ); */
+      node->_next = AllocationPolicy<T>::newNode( val, NULL, node ); /* new Node<T>( val ); */
       return;
     } /* end insert() */
 
@@ -188,12 +189,6 @@ namespace LinkedList {
 	return _iter;
       }
       
-      void insertAfter( const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& itr, T& val ) {
-	Node<T> * newNode = AllocationPolicy<T>::newNode( val ); /* new Node<T>( val ); */
-	newNode._next = itr._iter;
-	itr._iter = newNode;
-      }
-
     private:
       Node<T> * _iter;
       Status _status;
@@ -211,8 +206,26 @@ namespace LinkedList {
 
     void remove( typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& it ) {
       Node<T> * node = it.getIter();
-      /* TODO */
+      if( node == NULL ) return;
+
+      Node<T> * prev = node->prev();
+      Node<T> * next = node->next();
       
+      if( prev != NULL )
+	prev->_next = next;
+      if( next != NULL )
+	next->_prev = prev;
+
+      AllocationPolicy<T>::removeNode( next );
+    }
+
+    void remove( int index ) {
+      if( index < 0 ) return;
+      typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator it = begin();
+      for( int i = 0; (i < index) && (it != end()); ++i)
+	it++;
+
+      remove(it);
     }
 
   private:

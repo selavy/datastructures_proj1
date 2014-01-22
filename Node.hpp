@@ -8,6 +8,7 @@ template <class T>
 struct Node {
   explicit Node();
   explicit Node( const T& data, Node * next = NULL );
+  explicit Node( const T& data, Node * next = NULL, Node * prev = NULL );
   virtual ~Node();
  
   struct Node * next();
@@ -31,8 +32,14 @@ Node<T>::Node() {
 
 template <class T>
 Node<T>::Node( const T& data, Node<T> * next ) {
+  Node( data, next, NULL );
+}
+
+template <class T>
+Node<T>::Node( const T& data, Node<T> * next, Node<T> * prev ) {
   _data = new T(data);
   _next = next;
+  _prev = prev;
 }
 
 template <class T>

@@ -25,7 +25,19 @@ void printAll();
 int main( int argc, char ** argv )
 {
   
-  LinkedList::LinkedList<Term, SortingPolicies::IncreasingOrderSort, AllocationPolicies::UseNodeList> aList;
+  LinkedList::LinkedList<int, SortingPolicies::IncreasingOrderSort, AllocationPolicies::UseNodeList> aList;
+  aList.insert(1);
+  aList.insert(2);
+  aList.insert(3);
+  aList.insert(5);
+  aList.insert(1);
+  aList.insert(25);
+  aList.insert(20);
+  aList.remove(2);
+
+  for( int i = 0; i < aList.size(); ++i )
+    cout << aList.get(i) << " ";
+  cout << endl;
   return 0;
 
   ifstream in;
