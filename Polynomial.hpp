@@ -2,7 +2,7 @@
 #define _POLYNOMIAL_HPP
 
 #include "LinkedList.hpp"
-#include "DecreasingOrderExpSort.hpp"
+#include "Term.hpp"
 
 class Polynomial
 {
@@ -21,7 +21,7 @@ public:
   void clear();
 
 private:
-  LinkedList::LinkedList<Term, SortingPolicies::DecreasingOrderExpSort> _list;
+  LinkedList::LinkedList<Term> _list;
 };
 
 #endif

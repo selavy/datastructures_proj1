@@ -2,7 +2,7 @@
 #define _LINKEDLIST_HPP_
 
 #include "Node.hpp"
-#include "DecreasingOrderSort.hpp"
+#include "IncreasingOrderSort.hpp"
 #include "Exception.hpp"
 
 namespace LinkedList {
@@ -10,7 +10,7 @@ namespace LinkedList {
   template
   <
     class T,
-    template <class> class SortingPolicy = SortingPolicies::DecreasingOrderSort
+    template <class> class SortingPolicy = SortingPolicies::IncreasingOrderSort
   >
   class LinkedList {
   public:
