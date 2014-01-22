@@ -3,10 +3,10 @@
 #include <cstring>
 #include "Polynomial.hpp"
 #include "UseNodeList.hpp"
+#include "MyStd.hpp"
 
 using namespace std;
 
-const int SLEN = 512;
 const int nArrs = 10;
 
 Polynomial * poly_list[nArrs];
@@ -24,23 +24,12 @@ void printAll();
 
 int main( int argc, char ** argv )
 {
-  
-  LinkedList::LinkedList<Term, SortingPolicies::IncreasingOrderSort, AllocationPolicies::UseNodeList> aList;
-  for( int i = 0; i < 20; ++i )
-    {
-      Term term( i, 2*i );
-      aList.insert(term);
-    }
+  Polynomial aPoly;
+  aPoly.addTerm( 10, 5 );
+  aPoly.addTerm( 15, 0 );
+  aPoly.addTerm( -14, 3 );
+  aPoly.print( cout );
 
-  cout << "Before remove..." << endl;
-  aList.printVisual();
-  aList.remove(2);
-  cout << "After remove..." << endl;
-  aList.printVisual();
-
-  for( int i = 0; i < aList.size(); ++i )
-    cout << aList.get(i) << " ";
-  cout << endl;
   return 0;
 
   ifstream in;

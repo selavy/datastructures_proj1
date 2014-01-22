@@ -5,4 +5,6 @@
 #define NULL 0
 #endif
 
+const int SLEN = 512;
+
 #endif

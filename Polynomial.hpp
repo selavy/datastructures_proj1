@@ -2,16 +2,33 @@
 #define _POLYNOMIAL_HPP
 
 #include "LinkedList.hpp"
+#include "UseNodeList.hpp"
 #include "Term.hpp"
+#include <iostream>
 
 class Polynomial
 {
+public:
+  typedef LinkedList::LinkedList<
+    Term,
+  SortingPolicies::IncreasingOrderSort,
+  AllocationPolicies::UseNodeList
+  >::iterator itr_t;
+
+  typedef LinkedList::LinkedList<
+    Term,
+    SortingPolicies::IncreasingOrderSort,
+    AllocationPolicies::UseNodeList
+    > poly_t;
+
 public:
   explicit Polynomial();
   explicit Polynomial( char * poly );
   virtual ~Polynomial();
 
-  Polynomial& add( const Polynomial& rhs );
+  void addTerm( int coeff, int exp );
+
+  const Polynomial add( const Polynomial& rhs ) const;
   Polynomial& sub( const Polynomial& rhs );
   Polynomial& mult( const Polynomial& rhs );
   Polynomial& div( const Polynomial& rhs );
@@ -19,10 +36,10 @@ public:
   void differentiate();
   void integrate();
   void clear();
-  void print();
+  void print( std::ostream& os );
 
 private:
-  LinkedList::LinkedList<Term> _list;
+  poly_t _list;
 };
 
 #endif

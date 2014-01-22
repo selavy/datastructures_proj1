@@ -5,7 +5,7 @@
 
 struct Term
 {
-  Term( int c, int e ) : coeff(c), exp(e) {}
+  Term( double c, int e ) : coeff(c), exp(e) {}
   Term( const Term& term ) : coeff( term.coeff ), exp( term.exp ) {}
   bool operator<( const Term& rhs ) const {
     return exp < rhs.exp;
@@ -26,6 +26,59 @@ struct Term
     return ( exp >= rhs.exp );
   }
 
+ const Term operator+( const Term& rhs ) const {
+   return Term(*this) += rhs;
+  }
+  
+  Term& operator+=( const Term& rhs ) {
+    if( exp == rhs.exp )
+      {
+	coeff += rhs.coeff;
+      }
+    return *this;
+  }
+
+  Term& operator -=( const Term& rhs ) {
+    if( exp == rhs.exp )
+      {
+	coeff -= rhs.coeff;
+      }
+    return *this;
+  }
+
+  const Term operator-( const Term& rhs ) {
+    return Term(*this) -= rhs;
+  }
+
+  Term& operator*=( const int val ) {
+    coeff *= val;
+    return *this;
+  }
+
+  const Term operator*( int val ) const {
+    return Term(*this) *= val;
+  }
+  
+  Term& operator*=( const Term& rhs ) {
+    coeff *= rhs.coeff;
+    exp += rhs.exp;
+    return *this;
+  }
+
+  const Term operator*( const Term& rhs ) const {
+    return Term(*this) *= rhs;
+  }
+
+  Term& operator/=( const Term& rhs ) {
+    coeff /= rhs.coeff;
+    exp -= rhs.exp;
+    return *this;
+  }
+
+  const Term operator/=( const Term& rhs ) const {
+    return Term(*this) /= rhs;
+  }
+
   void print( std::ostream& os ) const {
     int val = (coeff > 0) ? coeff : -1 * coeff;
     if( exp != 0 )
@@ -39,7 +92,7 @@ struct Term
     return os;
   }
 
-  int coeff;
+  double coeff;
   int exp;
 };
 
