@@ -24,19 +24,22 @@ public:
 public:
   explicit Polynomial();
   explicit Polynomial( char * poly );
+  Polynomial( const Polynomial& other );
   virtual ~Polynomial();
 
-  void addTerm( int coeff, int exp );
+  void addTerm( double coeff, int exp );
+  void subTerm( double coeff, int exp );
+  void copy( const Polynomial& other );
 
   const Polynomial add( const Polynomial& rhs ) const;
-  Polynomial& sub( const Polynomial& rhs );
+  const Polynomial sub( const Polynomial& rhs ) const;
   Polynomial& mult( const Polynomial& rhs );
   Polynomial& div( const Polynomial& rhs );
   int eval( int point );
   void differentiate();
   void integrate();
   void clear();
-  void print( std::ostream& os );
+  void print( std::ostream& os ) const;
 
 private:
   poly_t _list;

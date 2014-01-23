@@ -22,11 +22,28 @@ namespace LinkedList {
     explicit LinkedList() {
       _head = NULL;
       _begin.setStatus(iterator::BEGIN);
+      _begin.setIter(_head);
       _end.setStatus(iterator::END);
     } /* end LinkedList() */
 
+    LinkedList( const LinkedList& other ) {
+      copy( other );
+    }
+
+    void copy( const LinkedList& other ) {
+      clear();
+      Node<T> * node = other._head;
+      while( node != NULL )
+	{
+	  insert( node->data() );
+	  node = node->next();
+	}
+
+      _begin.setIter(_head);
+    }
+
     virtual ~LinkedList() {
-      delete _head;
+      clear();
     } /* end ~LinkedList() */
 
     void printVisual() {
@@ -55,6 +72,7 @@ namespace LinkedList {
       if( _head == NULL )
 	{
 	  _head = AllocationPolicy<T>::newNode( val );
+	  _begin.setIter(_head);
 	  return;
 	}
 
@@ -64,6 +82,7 @@ namespace LinkedList {
 	  Node<T> * newNode =  AllocationPolicy<T>::newNode( val, _head );
 	  _head->_prev = newNode;
 	  _head = newNode;
+	  _begin.setIter(_head);
 	  return;
 	}
 
@@ -179,7 +198,7 @@ namespace LinkedList {
 	  return *this;
 	else
 	  {
-	    _iter = rhs._data;
+ 	    _iter = rhs._iter;
 	    _status = rhs._status;
 	    return *this;
 	  }
@@ -217,12 +236,11 @@ namespace LinkedList {
     };
     /************************************************/
 
-    typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& begin() {
-      _begin.setIter( _head );
+    const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& begin() const {
       return _begin;
     }
 
-    typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& end() {
+    const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& end() const {
       return _end;
     }
 
@@ -248,6 +266,18 @@ namespace LinkedList {
 	it++;
 
       remove(it);
+    }
+
+    void clear() {
+      Node<T> * node = _head;
+      Node<T> * tmp;
+
+      while( node != NULL )
+	{
+	  tmp = node->next();
+	  delete node;
+	  node = tmp;
+	}
     }
 
   private:

@@ -31,6 +31,7 @@ struct Term
   }
   
   Term& operator+=( const Term& rhs ) {
+    std::cout << "Adding coeff = " << rhs.coeff << ", exp = " << rhs.exp << std::endl;
     if( exp == rhs.exp )
       {
 	coeff += rhs.coeff;
@@ -81,8 +82,10 @@ struct Term
 
   void print( std::ostream& os ) const {
     int val = (coeff > 0) ? coeff : -1 * coeff;
-    if( exp != 0 )
+    if( (exp != 0) && (val != 1) )
       os << val << "x^" << exp;
+    else if( val == 1 )
+      os << "x^" << exp;
     else
       os << val; 
   }
