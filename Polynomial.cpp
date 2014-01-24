@@ -77,14 +77,25 @@ const Polynomial Polynomial::sub( const Polynomial& rhs ) const {
   return retVal;
 }
 
-Polynomial& Polynomial::mult( const Polynomial& rhs ) {
-  Polynomial * retVal = new Polynomial;
-  return *retVal;
+const Polynomial Polynomial::mult( const Polynomial& rhs ) const {
+  Polynomial retVal;
+  for( itr_t it = _list.begin(); it != _list.end(); ++it )
+    {
+      for( itr_t rit = rhs._list.begin(); rit != rhs._list.end(); ++rit )
+	{
+	  Term aterm = it.getData() * rit.getData();
+	  if( aterm.coeff != 0 )
+	    {
+	      retVal.addTerm( aterm.coeff, aterm.exp );
+	    }
+	}
+    }
+  return retVal;
 }
 
-Polynomial& Polynomial::div( const Polynomial& rhs ) {
-  Polynomial * retVal = new Polynomial;
-  return *retVal;
+const Polynomial Polynomial::div( const Polynomial& rhs ) const {
+  Polynomial retVal;
+  return retVal;
 }
 
 double Polynomial::eval( int point ) {

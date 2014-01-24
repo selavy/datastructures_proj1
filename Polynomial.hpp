@@ -34,8 +34,8 @@ public:
 
   const Polynomial add( const Polynomial& rhs ) const;
   const Polynomial sub( const Polynomial& rhs ) const;
-  Polynomial& mult( const Polynomial& rhs );
-  Polynomial& div( const Polynomial& rhs );
+  const Polynomial mult( const Polynomial& rhs ) const;
+  const Polynomial div( const Polynomial& rhs ) const;
   double eval( int point );
   void differentiate();
   void integrate();

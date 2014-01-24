@@ -154,6 +154,7 @@ int main( int argc, char ** argv )
 }
 
 void add( char * line ) {
+  
 }
 
 void mult( char * line ) {
@@ -275,6 +276,15 @@ void testSub() {
 
 void testMult() {
   cout << "testMult()" << endl;
+  Polynomial a, b;
+  a.addTerm( 6, 1 );
+  a.addTerm( 3, 0 );
+  b.addTerm( 4, 1 );
+  b.addTerm( 2, 0 );
+  cout << "a: " << a << endl;
+  cout << "b: " << b << endl;
+  cout << "Result :" << a.mult( b ) << endl;
+  cout << "Correct: 24x^2 + 24x + 6" << endl;
   cout << "end testMult()\n\n" << endl;
 }
 
