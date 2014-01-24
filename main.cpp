@@ -312,6 +312,18 @@ void testDiff() {
 
 void testIntg() {
   cout << "testIntg()" << endl;
+  Polynomial a;
+  a.addTerm( 1, 5 );
+  a.addTerm( -1, 4 );
+  a.addTerm( 3, 3 );
+  a.addTerm( 4, 2 );
+  a.addTerm( 5, 1 );
+  a.addTerm( 250, 0 );
+  cout << "a: " << a << endl;
+  cout << "Integrating..." << endl;
+  a.integrate();
+  cout << "Result :" << a << endl;
+  cout << "Correct: 0.1667x^6 - 0.2x^5 + 0.75x^4 + 1.3333x^3 + 2.5x^2 + 250x" << endl;
   cout << "End testIntg()\n\n" << endl;
 }
 

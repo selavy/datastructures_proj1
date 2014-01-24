@@ -15,7 +15,7 @@ namespace AllocationPolicies
   /* The linked list here is singly linked since all nodes
      are the same for our purposes */
   template <class T>
-    struct UseNodeList {
+  struct UseNodeList {
 
     static Node<T> * newNode( const T& val, Node<T> * nnode, Node<T> * pnode ) {
       if( _head == NULL )

@@ -115,6 +115,13 @@ void Polynomial::differentiate() {
 }
 
 void Polynomial::integrate() {
+  for( itr_t it = _list.begin(); it != _list.end(); ++it )
+    {
+      it.getIter()->_data->exp++;
+      int exp = it.getData().exp;
+      it.getIter()->_data->coeff /= static_cast<double>(exp);
+      // no way for a term to now be zero, so don't need to check
+    }
 }
 
 void Polynomial::clear() {
