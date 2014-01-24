@@ -5,6 +5,7 @@
 #include "UseNodeList.hpp"
 #include "Term.hpp"
 #include <iostream>
+#include <cmath>
 
 class Polynomial
 {
@@ -35,11 +36,14 @@ public:
   const Polynomial sub( const Polynomial& rhs ) const;
   Polynomial& mult( const Polynomial& rhs );
   Polynomial& div( const Polynomial& rhs );
-  int eval( int point );
+  double eval( int point );
   void differentiate();
   void integrate();
   void clear();
   void print( std::ostream& os ) const;
+
+  Polynomial& operator=( const Polynomial& rhs );
+  friend std::ostream& operator<<( std::ostream& os, const Polynomial& rhs );
 
 private:
   poly_t _list;

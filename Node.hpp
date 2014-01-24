@@ -8,7 +8,7 @@ template <class T>
 struct Node {
   explicit Node();
   explicit Node( const T& data, Node * next = NULL );
-  explicit Node( const T& data, Node * next = NULL, Node * prev = NULL );
+  explicit Node( const T& data, Node * next, Node * prev);
   virtual ~Node();
  
   struct Node * next();
@@ -46,8 +46,6 @@ template <class T>
 Node<T>::~Node() {
   if( _data != NULL )
     delete _data;
-  if( _next != NULL )
-    delete _next;
 }
 
 template <class T>

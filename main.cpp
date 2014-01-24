@@ -4,6 +4,7 @@
 #include "Polynomial.hpp"
 #include "UseNodeList.hpp"
 #include "MyStd.hpp"
+#include "Term.hpp"
 
 #define _UNIT_TESTS_
 
@@ -45,6 +46,13 @@ int main( int argc, char ** argv )
   testCopy();
   testPrint();
   testAdd();
+  testSub();
+  testMult();
+  testEval();
+  testDiff();
+  testIntg();
+  testDiv();
+  testRemove();
 #else
 
   ifstream in;
@@ -177,20 +185,21 @@ void printAll() {
 
 #ifdef _UNIT_TESTS_
 void testCopy() {
+  cout << "Test copy" << endl;
   Polynomial a, b;
   a.addTerm( 10, 5 );
-  cout << "a: "; a.print( cout ); cout << " copied to b..." << endl;
+  cout << "a: " << a << " copied to b..." << endl;
   b.copy( a );
-  cout << "b: "; b.print( cout ); cout << endl;
+  cout << "b: " << b << endl;
 
   Polynomial c(a), d;
   c.addTerm( 6, 6 );
   c.addTerm( -1, 2 );
-  cout << "c: "; c.print( cout ); cout << " copied to d..." << endl;
+  cout << "c: " << c << " copied to d..." << endl;
   d.copy( c );
-  cout << "d: "; d.print( cout ); cout << endl;
+  cout << "d: " << d << endl;
   
-  cout << "End testCopy()" << endl;
+  cout << "End testCopy()\n\n" << endl;
 }
 
 void testPrint() {
@@ -202,7 +211,7 @@ void testPrint() {
   cout << "Result :";
   aPoly.print( cout );
   cout << "\nCorrect: 10x^5 - 14x^3 + 15" << endl;
-  cout << "End testPrint()" << endl;
+  cout << "End testPrint()\n\n" << endl;
 }
 
 void testAdd() {
@@ -227,7 +236,7 @@ void testAdd() {
   cPoly.print( cout );
   cout << "\nCorrect: 24x^5 - 14x^3 + 20x^2 + 28" << endl;
 
-  Polynomial d, e, f;
+  Polynomial d, e;
   d.addTerm( 10, 5 );
   d.addTerm( -4, 2 );
   d.addTerm( 10, 0 );
@@ -236,33 +245,90 @@ void testAdd() {
   e.addTerm( 4, 2 );
   e.addTerm( -10, 1 );
   e.addTerm( -10, 0 );
-  f = d.add( e );
+  Polynomial f;
+  f = ( d.add( e ) );
   cout << "Result :";
   f.print( cout );
   cout << "\nCorrect: 12x^6 + 15x^5 - 10x" << endl;
 
-  cout << "End testAdd()" << endl;
+  cout << "End testAdd()\n\n" << endl;
 }
 
 void testSub() {
+  cout << "testSub()" << endl;
+  Polynomial a, b;
+  a.addTerm( 1, 1 );
+  a.addTerm( 2.2f, 2 );
+  a.addTerm( 3.3f, 3 );
+  a.addTerm( 4.4f, 4 );
+  a.addTerm( 5.5f, 5 );
+  b.addTerm( -3, 1 );
+  b.addTerm( -4, 2 );
+  b.addTerm( 5, 3 );
+  b.addTerm( 25, 8 );
+  cout << "a: " << a << endl;
+  cout << "b: " << b << endl;
+  cout << "Result : " << a.sub(b) << endl;
+  cout << "Correct: - 25x^8 + 5.5x^5 + 4.4x^4 - 1.7x^3 + 6.2x^2 + 4x" << endl;
+  cout << "End testSub()\n\n" << endl;
 }
 
 void testMult() {
+  cout << "testMult()" << endl;
+  cout << "end testMult()\n\n" << endl;
 }
 
 void testEval() {
+  cout << "testEval()" << endl;
+  Polynomial a;
+  a.addTerm( 1, 5 );
+  a.addTerm( -3, 4 );
+  a.addTerm( 4, 3 );
+
+  cout << "a: " << a << endl;
+  cout << "eval at 3" << endl;
+  cout << "Result : " << a.eval(3) << endl;
+  cout << "Correct: 108" << endl;
+
+  cout << "End testEval()\n\n" << endl;
 }
 
 void testDiff() {
+  cout << "testDiff()" << endl;
+  Polynomial a;
+  a.addTerm( 1, 5 );
+  a.addTerm( -1, 4 );
+  a.addTerm( 3, 3 );
+  a.addTerm( 4, 2 );
+  a.addTerm( 5, 1 );
+  a.addTerm( 250, 0 );
+  cout << "a: " << a << endl;
+  cout << "Differentiating..." << endl;
+  a.differentiate();
+  cout << "Result :" << a << endl;
+  cout << "Correct: 5x^4 - 4x^3 + 9x^2 + 8x + 5" << endl;
+  cout << "End testDiff()\n\n" << endl;
 }
 
 void testIntg() {
+  cout << "testIntg()" << endl;
+  cout << "End testIntg()\n\n" << endl;
 }
 
 void testDiv() {
+  cout << "testDiv()" << endl;
+  cout << "End testDiv()\n\n" << endl;
 }
 
 void testRemove() {
+  cout << "testRemove()" << endl;
+  Polynomial * a = new Polynomial;
+  a->addTerm( 10, 5 );
+  a->addTerm( -1.2, 3 );
+  delete a;
+  cout << "Polynomial destructor works\n";
+  cout << "End testRemove()\n\n" << endl;
 }
+
 
 #endif

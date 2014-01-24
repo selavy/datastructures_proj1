@@ -20,6 +20,11 @@ namespace AllocationPolicies
     static Node<T> * newNode( const T& val ) {
       return newNode( val, NULL, NULL );
     }
+
+    static void removeNode( Node<T> * node )
+    {
+      delete node;
+    }
   };
 
 }

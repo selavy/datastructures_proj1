@@ -250,6 +250,12 @@ namespace LinkedList {
 
       Node<T> * prev = node->prev();
       Node<T> * next = node->next();
+
+      it.setIter( prev );
+      it.setStatus( ( it.getIter() == NULL ) ?
+        LinkedList<T, SortingPolicy, AllocationPolicy>::iterator::BEGIN :
+			     LinkedList<T, SortingPolicy, AllocationPolicy>::iterator::MIDDLE);
+	
       
       if( prev != NULL )
 	prev->_next = next;
