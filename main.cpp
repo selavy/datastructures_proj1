@@ -114,15 +114,7 @@ int main( int argc, char ** argv )
 
 #ifdef _INPUT_TEST_
   cout << "printing polys..." << endl;
-  for( int i = 0; i < N; ++i )
-    {
-      cout << i << ": ";
-      if( poly_list[i] != NULL )
-	cout << *(poly_list[i]);
-      else
-	cout << "NULL";
-      cout << endl;
-    }
+  printAll();
 #endif
 
   bool quit = false;
@@ -304,18 +296,112 @@ void eval( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "eval()" << endl;
 #endif
-}
 
+  int n = 0, point = 0, index = 0;
+  char num[SLEN];
+  char pnt[SLEN];
+
+  line += 2; // go past the 'E' at the beginning of line 
+
+  for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
+    {
+      if( line[i] == ' ' )
+	{
+	  num[index] = '\0';
+	  n = atoi( num );
+	  line[SLEN - 1] = '\0'; // guarantee that it is a C-string
+	  line += (i + 1);
+	  strcpy( pnt, line );
+	  point = atoi( pnt );
+	  break;
+	}
+      else
+	{
+	  num[index] = line[i];
+	  index++;
+	}
+    }
+	 
+  n--;
+
+  if( INVALID(n) ) return;
+  if( poly_list[n] == NULL ) return;
+  
+  double retVal = poly_list[n]->eval( point );
+  cout << retVal << endl;
+  return;
+}
+  
 void diff( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "diff()" << endl;
 #endif
+
+  int n1 = 0, n2 = 0, index = 0;
+  char num1[SLEN], num2[SLEN];
+
+  for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
+    {
+      if( line[i] == ' ' )
+	{
+	  num1[index] = '\0';
+	  n1 = atoi( num1 );
+	  line[SLEN - 1] = '\0'; // guarantee is c-string
+	  line += (i + 1);
+	  strcpy( num2, line );
+	  n2 = atoi( num2 );
+	  break;
+	}
+      else
+	{
+	  num1[index] = line[i];
+	  index++;
+	}
+    }
+
+  n1--; n2--;
+  if( INVALID(n1) || INVALID(n2) ) return;
+  if( poly_list[n1] == NULL ) return;
+  if( poly_list[n2] == NULL ) poly_list[n2] = new Polynomial;
+
+  Polynomial retVal = poly_list[n1]->differentiate();
+  poly_list[n2]->copy( retVal );
 }
 
 void integ( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "integ()" << endl;
 #endif
+
+  int n1 = 0, n2 = 0, index = 0;
+  char num1[SLEN], num2[SLEN];
+
+  for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
+    {
+      if( line[i] == ' ' )
+	{
+	  num1[index] = '\0';
+	  n1 = atoi( num1 );
+	  line[SLEN - 1] = '\0'; // guarantee is c-string
+	  line += (i + 1);
+	  strcpy( num2, line );
+	  n2 = atoi( num2 );
+	  break;
+	}
+      else
+	{
+	  num1[index] = line[i];
+	  index++;
+	}
+    }
+
+  n1--; n2--;
+  if( INVALID(n1) || INVALID(n2) ) return;
+  if( poly_list[n1] == NULL ) return;
+  if( poly_list[n2] == NULL ) poly_list[n2] = new Polynomial;
+
+  Polynomial retVal = poly_list[n1]->integrate();
+  poly_list[n2]->copy( retVal );
 }
 
 void div( char * line ) {
@@ -507,8 +593,8 @@ void testDiff() {
   a.addTerm( 250, 0 );
   cout << "a: " << a << endl;
   cout << "Differentiating..." << endl;
-  a.differentiate();
-  cout << "Result :" << a << endl;
+  Polynomial b = a.differentiate();
+  cout << "Result :" << b << endl;
   cout << "Correct: 5x^4 - 4x^3 + 9x^2 + 8x + 5" << endl;
   cout << "End testDiff()\n\n" << endl;
 }
@@ -524,8 +610,8 @@ void testIntg() {
   a.addTerm( 250, 0 );
   cout << "a: " << a << endl;
   cout << "Integrating..." << endl;
-  a.integrate();
-  cout << "Result :" << a << endl;
+  Polynomial b = a.integrate();
+  cout << "Result :" << b << endl;
   cout << "Correct: 0.1667x^6 - 0.2x^5 + 0.75x^4 + 1.3333x^3 + 2.5x^2 + 250x" << endl;
   cout << "End testIntg()\n\n" << endl;
 }

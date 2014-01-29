@@ -137,31 +137,37 @@ double Polynomial::eval( int point ) {
   return retVal;
 }
 
-void Polynomial::differentiate() {
+const Polynomial Polynomial::differentiate() {
+  Polynomial retVal;
+
   for( itr_t it = _list.begin(); it != _list.end(); ++it )
     {
       int exp = it.getData().exp;
-      it.getIter()->_data->coeff *= exp;
-      if( it.getData().exp == 0 )
-	{
-	  _list.remove( it );
-	  return;
-	}
+      double coeff = it.getIter()->_data->coeff * exp;
 
-      it.getIter()->_data->exp--;
-      if( it.getData().coeff == 0 )
-	_list.remove( it );
+      if( (coeff != 0) && (exp != 0) )
+	{
+	  exp--;
+	  retVal.addTerm( coeff, exp );
+	}
     }
+
+  return retVal;
 }
 
-void Polynomial::integrate() {
+const Polynomial Polynomial::integrate() {
+  Polynomial retVal;
+
   for( itr_t it = _list.begin(); it != _list.end(); ++it )
     {
-      it.getIter()->_data->exp++;
       int exp = it.getData().exp;
-      it.getIter()->_data->coeff /= static_cast<double>(exp);
+      exp++;
+      double coeff = it.getIter()->_data->coeff / static_cast<double>(exp);
+      retVal.addTerm( coeff, exp );
       // no way for a term to now be zero, so don't need to check
     }
+  
+  return retVal;
 }
 
 void Polynomial::clear() {

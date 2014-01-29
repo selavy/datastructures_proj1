@@ -38,8 +38,8 @@ public:
   const Polynomial mult( const Polynomial& rhs ) const;
   const Polynomial div( const Polynomial& rhs ) const;
   double eval( int point );
-  void differentiate();
-  void integrate();
+  const Polynomial differentiate();
+  const Polynomial integrate();
   void clear();
   void print( std::ostream& os ) const;
 
