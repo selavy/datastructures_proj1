@@ -6,7 +6,11 @@
 #include "MyStd.hpp"
 #include "Term.hpp"
 
-#define _UNIT_TESTS_
+//#define _UNIT_TESTS_
+//#define _INPUT_TEST_
+//#define _FUNC_HDR_
+
+#define INVALID(x) ((x < 0) || (x >= nArrs))
 
 using namespace std;
 
@@ -37,12 +41,14 @@ void testDiff();
 void testIntg();
 void testDiv();
 void testRemove();
+void testPolyConstr();
 /* End Unit Tests */
 #endif
 
 int main( int argc, char ** argv )
 {
 #ifdef _UNIT_TESTS_
+  testPolyConstr();
   testCopy();
   testPrint();
   testAdd();
@@ -65,10 +71,15 @@ int main( int argc, char ** argv )
       char file_name[SLEN];
       cout << "Input file? ";
       cin.getline( file_name, SLEN );
-      in.open( argv[1] );
-    }
 
-  if(! in.good() )
+      // chomp the newline character
+      size_t end = strlen( file_name );
+      file_name[end] = '\0';
+
+      if( strncmp( file_name, "quit", strlen("quit") + 1 ) == 0 ) return 0;
+      in.open( file_name );
+    }
+  if(! in.is_open() )
     {
       cerr << "Unable to open input file!" << endl;
       return 1;
@@ -81,19 +92,49 @@ int main( int argc, char ** argv )
   /* I am going to assume that the input file is correctly formatted */
   int N;
   in >> N;
+
+  char throwaway;
+  in >> throwaway;
+  
+#ifdef _INPUT_TEST_
+  cout << "n = " << N << endl;
+#endif
+
   for( int i = 0; i < N; ++i )
     {
       char line[SLEN];
-      cin.getline( line, SLEN );
-      poly_list[N] = new Polynomial( line );
+      in.getline( line, SLEN );
+
+#ifdef _INPUT_TEST_
+      cout << "line = " << line << endl;
+#endif
+
+      poly_list[i] = new Polynomial( line );
     }
+
+#ifdef _INPUT_TEST_
+  cout << "printing polys..." << endl;
+  for( int i = 0; i < N; ++i )
+    {
+      cout << i << ": ";
+      if( poly_list[i] != NULL )
+	cout << *(poly_list[i]);
+      else
+	cout << "NULL";
+      cout << endl;
+    }
+#endif
 
   bool quit = false;
 
   while( in.good() && !quit )
     {
       char line[SLEN];
-      cin.getline( line, SLEN );
+      in.getline( line, SLEN );
+
+#ifdef _INPUT_TEST_
+      cout << line << endl;
+#else
       
       switch( line[0] )
 	{
@@ -140,6 +181,8 @@ int main( int argc, char ** argv )
 	default:
 	  break;
 	}
+#endif
+
     }
 
   /* deallocate memory */
@@ -154,34 +197,184 @@ int main( int argc, char ** argv )
 }
 
 void add( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "add()" << endl;
+#endif
+
+  line += 2;
+  char curr[SLEN];
+  int index = 0;
   
+  int a = 0, b = 0, c = 0;
+  bool mode = true;
+
+  for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
+    {
+      if( (line[i] == ' ') )
+	{
+	  curr[index] = '\0';
+	  if( mode )
+	    {
+	      a = atoi( curr );
+	      mode = false;
+	    }
+	  else if( !mode )
+	    {
+	      b = atoi( curr );
+	    }
+	  index = 0;
+	}
+      else
+	{
+	  curr[index] = line[i];
+	  index++;
+	}
+    }
+
+  c = atoi( curr );
+
+  a--; b--; c--;
+
+  if( INVALID(a) || INVALID(b) || INVALID(c) ) return;
+  if( poly_list[a] == NULL ) return;
+  if( poly_list[b] == NULL ) return;
+
+  Polynomial retVal = poly_list[a]->add( *(poly_list[b]) );
+  if( poly_list[c] == NULL )
+    poly_list[c] = new Polynomial( retVal );
+  else
+    poly_list[c]->copy( retVal );
+
+#ifdef _RSLT_
+  cout << "Added " << *(poly_list[a]) << " + " << *(poly_list[b]) << " = " << *(poly_list[c]) << endl;
+#endif
 }
 
 void mult( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "mult()" << endl;
+#endif
+
+  line += 2;
+  char curr[SLEN];
+  int index = 0;
+  
+  int a = 0, b = 0, c = 0;
+  bool mode = true;
+
+  for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
+    {
+      if( (line[i] == ' ') )
+	{
+	  curr[index] = '\0';
+	  if( mode )
+	    {
+	      a = atoi( curr );
+	      mode = false;
+	    }
+	  else if( !mode )
+	    {
+	      b = atoi( curr );
+	    }
+	  index = 0;
+	}
+      else
+	{
+	  curr[index] = line[i];
+	  index++;
+	}
+    }
+
+  c = atoi( curr );
+
+  a--; b--; c--;
+
+  if( INVALID(a) || INVALID(b) || INVALID(c) ) return;
+  if( poly_list[a] == NULL ) return;
+  if( poly_list[b] == NULL ) return;
+
+  Polynomial retVal = poly_list[a]->mult( *(poly_list[b]) );
+  if( poly_list[c] == NULL )
+    poly_list[c] = new Polynomial( retVal );
+  else
+    poly_list[c]->copy( retVal );
 }
 
 void eval( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "eval()" << endl;
+#endif
 }
 
 void diff( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "diff()" << endl;
+#endif
 }
 
 void integ( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "integ()" << endl;
+#endif
 }
 
 void div( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "div()" << endl;
+#endif
 }
 
 void read( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "read()";
+#endif
 }
 
 void print( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "print(): ";
+#endif
+  line += 2;
+  int n = atoi( line );
+#ifdef _FUNC_HDR_
+  cout << n << endl;
+#endif
+  n--;
+  if( INVALID(n) ) return;
+  if( poly_list[n] == NULL ) return;
+
+  cout << *(poly_list[n]) << endl;
 }
 
 void remove( char * line ) {
+#ifdef _FUNC_HDR_
+  cout << "remove()" << endl;
+#endif
+  
+  int index = atoi( line );
+  if( poly_list[index] != NULL )
+    {    
+      delete poly_list[index];
+      poly_list[index] = NULL;
+    }
 }
 
 void printAll() {
+#ifdef _FUNC_HDR_
+  cout << "printAll()" << endl;
+#endif
+
+  for( int i = 0; i < nArrs; ++i )
+    {
+      if( poly_list[i] != NULL )
+	{
+#ifdef _FUNC_HDR_
+	  cout << i + 1 << ": ";
+#endif
+	  cout << *(poly_list[i]) << endl;
+	}
+    }
+  cout << endl;
 }
 
 #ifdef _UNIT_TESTS_
@@ -352,5 +545,12 @@ void testRemove() {
   cout << "End testRemove()\n\n" << endl;
 }
 
-
+void testPolyConstr() {
+  cout << "testPolyConstr()" << endl;
+  char line[] = "6 3 5 2 3 1 1 0";
+  Polynomial a( line );
+  cout << "Result :" << a << endl;
+  cout << "Correct: " << "6x^3 + 5x^2 + 3x + 1" << endl;
+  cout << "End testPolyConstr()\n\n" << endl;
+}
 #endif

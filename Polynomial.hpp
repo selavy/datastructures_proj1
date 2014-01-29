@@ -6,6 +6,7 @@
 #include "Term.hpp"
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 
 class Polynomial
 {

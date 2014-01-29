@@ -81,16 +81,16 @@ struct Term
 
   void print( std::ostream& os ) const {
     double val = (coeff > 0) ? coeff : -1 * coeff;
-    if( (exp != 0) && (exp != 1) && (val != 1) )
+    if( exp == 0 )
+      os << val;
+    else if( (exp != 0) && (exp != 1) && (val != 1) )
       os << val << "x^" << exp;
     else if( val == 1 && (exp != 1) )
       os << "x^" << exp;
     else if( (val != 1) && (exp == 1) )
       os << val << "x";
-    else if( exp == 1 )
+    else /*( exp == 1 ) */
       os << "x";
-    else
-      os << val; 
   }
 
   friend std::ostream& operator<<( std::ostream& os, const Term& term ) {

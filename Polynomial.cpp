@@ -4,16 +4,45 @@ Polynomial::Polynomial() {
 }
 
 Polynomial::Polynomial( char * poly ) {
-  // TODO
-  // char line[SLEN];
-
   /* have to assume that the string is null terminated */
-  /*
-  for( int i = 0; (i < SLEN) && poly[i] != '\0'; ++i )
+  char curr[SLEN];
+  int index = 0;
+  curr[0] = '\0';
+  double coeff = 0.0f;
+  int exp = 0;
+
+  // true => coeff, false => exp
+  bool mode = true;
+
+  for( int i = 0; (i < SLEN) && (poly[i] != '\0'); ++i )
     {
-      
+      if( (poly[i] == ' ') && mode )
+	{
+	  curr[index] = '\0';
+	  coeff = atof(curr);
+	  mode = false;
+	  index = 0;
+	}      
+      else if( (poly[i] == ' ') && !mode )
+	{
+	  curr[index] = '\0';
+	  exp = atoi(curr);
+	  mode = true;
+	  addTerm( coeff, exp );
+	  index = 0;
+	}
+      else
+	{
+	  curr[index] = poly[i];
+	  index++;
+	}
     }
-  */
+
+  
+  // the last set of terms will have been collected, but not trigger poly[i] == ' '
+  curr[index] = '\0';
+  exp = atoi(curr);
+  addTerm( coeff, exp );
 }
 
 Polynomial::Polynomial( const Polynomial& other ) {
