@@ -3,12 +3,14 @@
 #include <cstring>
 #include "Polynomial.hpp"
 #include "UseNodeList.hpp"
+#include "Node.hpp"
 #include "MyStd.hpp"
 #include "Term.hpp"
 
 //#define _UNIT_TESTS_
 //#define _INPUT_TEST_
-//#define _FUNC_HDR_
+#define _FUNC_HDR_
+#define _RSLT_
 
 #define INVALID(x) ((x < 0) || (x >= nArrs))
 
@@ -93,9 +95,8 @@ int main( int argc, char ** argv )
   int N;
   in >> N;
 
-  char throwaway;
-  in >> throwaway;
-  
+  in.get(); // move past the newline character
+
 #ifdef _INPUT_TEST_
   cout << "n = " << N << endl;
 #endif
@@ -105,9 +106,7 @@ int main( int argc, char ** argv )
       char line[SLEN];
       in.getline( line, SLEN );
 
-#ifdef _INPUT_TEST_
       cout << "line = " << line << endl;
-#endif
 
       poly_list[i] = new Polynomial( line );
     }
@@ -121,8 +120,9 @@ int main( int argc, char ** argv )
 
   while( in.good() && !quit )
     {
-      char line[SLEN];
-      in.getline( line, SLEN );
+      char * line = new char[SLEN]; // can NOT pass non-malloc'd c-string to getline
+      size_t size = SLEN;
+      in. getline( line, size );
 
 #ifdef _INPUT_TEST_
       cout << line << endl;
@@ -173,8 +173,9 @@ int main( int argc, char ** argv )
 	default:
 	  break;
 	}
+      
+      delete line;
 #endif
-
     }
 
   /* deallocate memory */
@@ -183,6 +184,8 @@ int main( int argc, char ** argv )
       if( poly_list[i] != NULL )
 	delete poly_list[i];
     }
+
+  AllocationPolicies::UseNodeList<Node<Term> >::deleteFreeStore();
 #endif
 
   return 0;
@@ -238,7 +241,7 @@ void add( char * line ) {
     poly_list[c]->copy( retVal );
 
 #ifdef _RSLT_
-  cout << "Added " << *(poly_list[a]) << " + " << *(poly_list[b]) << " = " << *(poly_list[c]) << endl;
+  cout << "Added (" << *(poly_list[a]) << ") + (" << *(poly_list[b]) << ") = " << *(poly_list[c]) << endl;
 #endif
 }
 
@@ -290,6 +293,10 @@ void mult( char * line ) {
     poly_list[c] = new Polynomial( retVal );
   else
     poly_list[c]->copy( retVal );
+
+#ifdef _RSLT_
+  cout << "Result (mult): " << *(poly_list[c]) << endl;
+#endif
 }
 
 void eval( char * line ) {
@@ -328,17 +335,24 @@ void eval( char * line ) {
   if( poly_list[n] == NULL ) return;
   
   double retVal = poly_list[n]->eval( point );
+
+#ifdef _RSLT_
+  cout << "Result (eval): ";
+#endif
+
   cout << retVal << endl;
+
   return;
 }
   
 void diff( char * line ) {
 #ifdef _FUNC_HDR_
-  cout << "diff()" << endl;
+  cout << "diff(): ";
 #endif
 
   int n1 = 0, n2 = 0, index = 0;
   char num1[SLEN], num2[SLEN];
+  line += 2; // go past the 'D' at the beginning
 
   for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
     {
@@ -359,13 +373,22 @@ void diff( char * line ) {
 	}
     }
 
+#ifdef _FUNC_HDR_
+  cout << "#" << n1 << " put into #" << n2 << endl;
+#endif
+
   n1--; n2--;
+
   if( INVALID(n1) || INVALID(n2) ) return;
   if( poly_list[n1] == NULL ) return;
   if( poly_list[n2] == NULL ) poly_list[n2] = new Polynomial;
 
   Polynomial retVal = poly_list[n1]->differentiate();
   poly_list[n2]->copy( retVal );
+
+#ifdef _RSLT_
+  cout << "Result (diff): " << *(poly_list[n2]) << endl;
+#endif
 }
 
 void integ( char * line ) {
@@ -375,6 +398,7 @@ void integ( char * line ) {
 
   int n1 = 0, n2 = 0, index = 0;
   char num1[SLEN], num2[SLEN];
+  line += 2; // go past the 'D' at the beginning
 
   for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
     {
@@ -395,19 +419,32 @@ void integ( char * line ) {
 	}
     }
 
+#ifdef _FUNC_HDR_
+  cout << "#" << n1 << " put into #" << n2 << endl;
+#endif
+
   n1--; n2--;
+
   if( INVALID(n1) || INVALID(n2) ) return;
   if( poly_list[n1] == NULL ) return;
   if( poly_list[n2] == NULL ) poly_list[n2] = new Polynomial;
 
   Polynomial retVal = poly_list[n1]->integrate();
   poly_list[n2]->copy( retVal );
+
+#ifdef _RSLT_
+  cout << "Result (integ): " << *(poly_list[n2]) << endl;
+#endif
 }
 
 void div( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "div()" << endl;
 #endif
+
+  //Polynomial retVal;
+
+  
 }
 
 void read( char * line ) {
@@ -418,7 +455,7 @@ void read( char * line ) {
 
 void print( char * line ) {
 #ifdef _FUNC_HDR_
-  cout << "print(): ";
+  cout << "print(): #";
 #endif
   line += 2;
   int n = atoi( line );

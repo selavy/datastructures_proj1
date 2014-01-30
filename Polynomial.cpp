@@ -83,6 +83,7 @@ void Polynomial::subTerm( double coeff, int exp ) {
 }
 
 Polynomial::~Polynomial() {
+  
 }
 
 const Polynomial Polynomial::add( const Polynomial& rhs ) const {
@@ -176,11 +177,20 @@ void Polynomial::clear() {
 
 void Polynomial::print( std::ostream& os ) const {
   itr_t it = _list.begin();
+
+  if( it == _list.end() )
+    {
+      cout << "0";
+      return;
+    }
+
   if( it != _list.end() )
     {
       if( it.getData().coeff < 0.0f )
 	os << "-";
-      os << " " << it.getData() << " ";
+      if( it != _list.begin() )
+	os << " ";
+      os << it.getData() << " ";
     }
   
   it++;
