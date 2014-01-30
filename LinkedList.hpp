@@ -251,6 +251,9 @@ namespace LinkedList {
       Node<T> * prev = node->prev();
       Node<T> * next = node->next();
 
+      if( node == _head )
+	_head = next;
+
       it.setIter( prev );
       it.setStatus( ( it.getIter() == NULL ) ?
         LinkedList<T, SortingPolicy, AllocationPolicy>::iterator::BEGIN :
@@ -281,9 +284,13 @@ namespace LinkedList {
       while( node != NULL )
 	{
 	  tmp = node->next();
-	  delete node;
+	  AllocationPolicy<T>::removeNode( node );
 	  node = tmp;
+	  if( node != NULL )
+	    node->_prev = NULL;
 	}
+
+      _head = NULL;
     }
 
   private:

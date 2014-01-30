@@ -439,17 +439,47 @@ void integ( char * line ) {
 
 void div( char * line ) {
 #ifdef _FUNC_HDR_
-  cout << "div()" << endl;
+  cout << "div(): NOT IMPLEMENTED" << endl;
 #endif
 
   //Polynomial retVal;
-
-  
 }
 
 void read( char * line ) {
 #ifdef _FUNC_HDR_
-  cout << "read()";
+  cout << "read(): " << line << endl;
+#endif
+
+  line += 2; // go past the 'R'
+  char polyNum[SLEN];
+  int index = 0, n = 0, i = 0;
+
+  for( ; (i < SLEN) && (line[i] != '\0'); ++i )
+    {
+      if( line[i] == ' ' )
+	{
+	  polyNum[index] = '\0';
+	  n = atoi( polyNum );
+	  break;
+	}
+      else
+	{
+	  polyNum[index] = line[i];
+	  index++;
+	}
+    }
+
+  line += (i + 1);
+
+  if( INVALID(n) ) return;
+
+  if( poly_list[n] == NULL )
+    delete poly_list[n];
+
+  poly_list[n] = new Polynomial( line );
+
+#ifdef _RSLT_
+  cout << "Read in: " << *(poly_list[n]) << endl;
 #endif
 }
 
@@ -471,15 +501,24 @@ void print( char * line ) {
 
 void remove( char * line ) {
 #ifdef _FUNC_HDR_
-  cout << "remove()" << endl;
+  cout << "remove(): " << line << endl;
 #endif
-  
+  line += 2; // move past the 'Z'
   int index = atoi( line );
+  index--;
+  if( INVALID( index ) ) return;
   if( poly_list[index] != NULL )
     {    
       delete poly_list[index];
       poly_list[index] = NULL;
     }
+
+#ifdef _RSLT_
+  if( poly_list[index] == NULL )
+    cout << "successfullly removed" << endl;
+  else
+    cout << "NOT successfully removed" << endl;
+#endif
 }
 
 void printAll() {
@@ -502,21 +541,25 @@ void printAll() {
 
 #ifdef _UNIT_TESTS_
 void testCopy() {
-  cout << "Test copy" << endl;
+  //cout << "Test copy" << endl;
   Polynomial a, b;
   a.addTerm( 10, 5 );
-  cout << "a: " << a << " copied to b..." << endl;
+  //  cout << "a: " << a << " copied to b..." << endl;
   b.copy( a );
-  cout << "b: " << b << endl;
+  //cout << "b: " << b << endl;
 
   Polynomial c(a), d;
   c.addTerm( 6, 6 );
   c.addTerm( -1, 2 );
-  cout << "c: " << c << " copied to d..." << endl;
+  //cout << "c: " << c << " copied to d..." << endl;
   d.copy( c );
-  cout << "d: " << d << endl;
+  //cout << "d: " << d << endl;
+
+  //cout << "d: " << d << " copied to a..." << endl;
+  a.copy( d );
+  //cout << "a: " << a << endl;
   
-  cout << "End testCopy()\n\n" << endl;
+  //cout << "End testCopy()\n\n" << endl;
 }
 
 void testPrint() {

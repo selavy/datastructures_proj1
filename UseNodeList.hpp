@@ -24,6 +24,8 @@ namespace AllocationPolicies
 	{
 	  Node<T> * head = _head;
 	  _head = _head->next();
+	  //if( head->_data != NULL )
+	  //  delete head->_data;
 	  head->_data = new T(val);
 	  head->_next = nnode;
 	  head->_prev = pnode;
@@ -41,8 +43,21 @@ namespace AllocationPolicies
 
     static void removeNode( Node<T> * node )
     {
-      node->_next = _head;
-      _head = node;
+      node->_next = NULL;
+      node->_prev = NULL;
+      //if( node->_data != NULL )
+      //delete node->_data;
+
+      if( _head == NULL )
+	{
+	  _head = node;
+	  _head->_next = NULL; // just in case, but probably unnecessary
+	}
+      else
+	{
+	  node->_next = _head;
+	  _head = node;
+	}
     }
 
     /* I have to add this hacky function because otherwise
