@@ -9,8 +9,8 @@
 
 //#define _UNIT_TESTS_
 //#define _INPUT_TEST_
-#define _FUNC_HDR_
-#define _RSLT_
+//#define _FUNC_HDR_
+//#define _RSLT_
 
 #define INVALID(x) ((x < 0) || (x >= nArrs))
 
