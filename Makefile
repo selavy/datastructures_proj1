@@ -2,14 +2,14 @@ CPP = g++
 CFLAGS = -Wall -Werror -pedantic -ansi -g -frepo
 
 OBJS = main.o Exception.o Polynomial.o # LinkedList.o 
-TEMPLATES = LinkedList.hpp Node.hpp DecreasingOrderSort.hpp IncreasingOrderSort.hpp FIFOSort.hpp UseNew.hpp UseNodeList.hpp UseDelete.hpp
-HEADERS = Term.hpp MyStd.hpp
+TEMPLATES = LinkedList.hpp Node.hpp DecreasingOrderSort.hpp IncreasingOrderSort.hpp FIFOSort.hpp
+HEADERS = Term.hpp MyStd.hpp UseNew.hpp UseNodeList.hpp UseDelete.hpp
 
-proj1: $(OBJS)
+proj1: $(OBJS) $(TEMPLATES) $(HEADERS)
 	$(CPP) $(CFLAGS) $(OBJS) -o proj1
 main.o: main.cpp $(TEMPLATES) $(HEADERS)
 	$(CPP) -c $(CFLAGS) main.cpp
-Polynomial.o: Polynomial.hpp Polynomial.cpp
+Polynomial.o: Polynomial.hpp Polynomial.cpp $(TEMPLATES) $(HEADERS)
 	$(CPP) -c $(CFLAGS) Polynomial.cpp
 Exception.o: Exception.hpp Exception.cpp
 	$(CPP) -c $(CFLAGS) Exception.cpp

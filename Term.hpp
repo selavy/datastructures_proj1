@@ -69,6 +69,10 @@ struct Term
     return Term(*this) *= rhs;
   }
 
+  int degree() const {
+    return exp;
+  }
+  
   Term& operator/=( const Term& rhs ) {
     coeff /= rhs.coeff;
     exp -= rhs.exp;

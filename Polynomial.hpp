@@ -29,10 +29,12 @@ public:
   Polynomial( const Polynomial& other );
   virtual ~Polynomial();
 
+  void addTerm( const Term& aTerm );
   void addTerm( double coeff, int exp );
   void subTerm( double coeff, int exp );
   void copy( const Polynomial& other );
 
+  int degree() const;
   const Polynomial add( const Polynomial& rhs ) const;
   const Polynomial sub( const Polynomial& rhs ) const;
   const Polynomial mult( const Polynomial& rhs ) const;
@@ -42,6 +44,8 @@ public:
   const Polynomial integrate();
   void clear();
   void print( std::ostream& os ) const;
+  
+  static void deleteFreeStore();
 
   Polynomial& operator=( const Polynomial& rhs );
   friend std::ostream& operator<<( std::ostream& os, const Polynomial& rhs );

@@ -25,6 +25,11 @@ namespace AllocationPolicies
     {
       delete node;
     }
+
+    static void deleteFreeStore()
+    {
+      return;
+    }
   };
 
 }

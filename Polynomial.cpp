@@ -53,6 +53,14 @@ void Polynomial::copy( const Polynomial& other ) {
   _list.copy( other._list );
 }
 
+int Polynomial::degree() const {
+  return _list.get(0).degree();
+}
+
+void Polynomial::addTerm( const Term& aTerm ) {
+  addTerm( aTerm.coeff, aTerm.exp );
+}
+
 void Polynomial::addTerm( double coeff, int exp ) {
   /* do not add terms with 0 coeff to the list */
   if( coeff == 0 )
@@ -123,8 +131,46 @@ const Polynomial Polynomial::mult( const Polynomial& rhs ) const {
   return retVal;
 }
 
+// doesn't return a remainder
 const Polynomial Polynomial::div( const Polynomial& rhs ) const {
   Polynomial retVal;
+
+  if( degree() < rhs.degree() )
+    {
+      return retVal; // return 0
+    }
+
+  Polynomial rSide( *this );
+  int rDeg = rhs.degree();
+  double rCoeff = rhs._list.begin().getData().coeff;
+  
+  itr_t it = rSide._list.begin();
+  int i = 0; // TODO: remove i
+  while( i < 10 ) // TODO: remove i
+    {
+      if( it == rSide._list.end() ) break;
+      //cout << "Currently rSide = " << rSide << endl;
+      int deg_diff = it.getData().degree() - rDeg;
+      if( deg_diff < 0 ) break; // TODO: check this condition, maybe need to put rest into remainder?
+      
+      double coeff = it.getData().coeff / rCoeff;
+      Polynomial tmp;
+      Term multiplier( coeff, deg_diff );
+      retVal.addTerm( multiplier );
+      
+      for( itr_t itt = rhs._list.begin(); itt != rhs._list.end(); ++itt )
+	{
+	  Term res = itt.getData() * multiplier;
+	  tmp.addTerm( res );
+	}
+
+      //cout << "tmp = " << tmp << endl;
+      rSide = rSide.sub( tmp );
+      //cout << "Now rSide = " << rSide << endl;
+      it = rSide._list.begin();
+      ++i; // TODO: remove this
+    }
+  
   return retVal;
 }
 
@@ -202,6 +248,10 @@ void Polynomial::print( std::ostream& os ) const {
 	os << "+ ";
       os << it.getData() << " ";
     }
+}
+
+/* static */ void Polynomial::deleteFreeStore() {
+  AllocationPolicies::UseNodeList< Node<Term> >::deleteFreeStore();
 }
 
 Polynomial& Polynomial::operator=( const Polynomial& rhs ) {

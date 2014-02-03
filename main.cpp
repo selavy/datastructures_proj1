@@ -32,7 +32,7 @@ void remove( char * line );
 void printAll();
 
 #ifdef _UNIT_TESTS_
-/* Unit Tests */
+// Unit Tests //
 void testCopy();
 void testPrint();
 void testAdd();
@@ -44,7 +44,7 @@ void testIntg();
 void testDiv();
 void testRemove();
 void testPolyConstr();
-/* End Unit Tests */
+// End Unit Tests //
 #endif
 
 int main( int argc, char ** argv )
@@ -87,14 +87,13 @@ int main( int argc, char ** argv )
       return 1;
     }
 
-  /* initialize polynomial array pointers */
+  // initialize polynomial array pointers
   for( int i = 0; i < nArrs; ++i )
     poly_list[i] = NULL;
 
-  /* I am going to assume that the input file is correctly formatted */
+  // I am going to assume that the input file is correctly formatted
   int N;
   in >> N;
-
   in.get(); // move past the newline character
 
 #ifdef _INPUT_TEST_
@@ -105,9 +104,9 @@ int main( int argc, char ** argv )
     {
       char line[SLEN];
       in.getline( line, SLEN );
-
+#ifdef _INPUT_TEST_
       cout << "line = " << line << endl;
-
+#endif
       poly_list[i] = new Polynomial( line );
     }
 
@@ -121,12 +120,13 @@ int main( int argc, char ** argv )
   while( in.good() && !quit )
     {
       char * line = new char[SLEN]; // can NOT pass non-malloc'd c-string to getline
+      memset( line, 0, SLEN );
       size_t size = SLEN;
-      in. getline( line, size );
+      in.getline( line, size );
 
 #ifdef _INPUT_TEST_
       cout << line << endl;
-#else
+#endif
       
       switch( line[0] )
 	{
@@ -174,18 +174,21 @@ int main( int argc, char ** argv )
 	  break;
 	}
       
-      delete line;
-#endif
+      delete [] line;
     }
 
-  /* deallocate memory */
+  // deallocate memory
   for( int i = 0; i < nArrs; ++i )
     {
       if( poly_list[i] != NULL )
-	delete poly_list[i];
+	{
+	  delete poly_list[i];
+	  poly_list[i] = NULL;
+	}
     }
 
-  AllocationPolicies::UseNodeList<Node<Term> >::deleteFreeStore();
+  AllocationPolicies::UseNodeList<Term>::deleteFreeStore();
+      
 #endif
 
   return 0;
@@ -195,7 +198,6 @@ void add( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "add()" << endl;
 #endif
-
   line += 2;
   char curr[SLEN];
   int index = 0;
@@ -234,11 +236,13 @@ void add( char * line ) {
   if( poly_list[a] == NULL ) return;
   if( poly_list[b] == NULL ) return;
 
-  Polynomial retVal = poly_list[a]->add( *(poly_list[b]) );
+  /*Polynomial retVal = poly_list[a]->add( *(poly_list[b]) );
   if( poly_list[c] == NULL )
     poly_list[c] = new Polynomial( retVal );
   else
-    poly_list[c]->copy( retVal );
+  poly_list[c]->copy( retVal ); */
+  if( poly_list[c] == NULL ) poly_list[c] = new Polynomial;
+  poly_list[c]->copy( poly_list[a]->add( *(poly_list[b] ) ) );
 
 #ifdef _RSLT_
   cout << "Added (" << *(poly_list[a]) << ") + (" << *(poly_list[b]) << ") = " << *(poly_list[c]) << endl;
@@ -288,11 +292,13 @@ void mult( char * line ) {
   if( poly_list[a] == NULL ) return;
   if( poly_list[b] == NULL ) return;
 
-  Polynomial retVal = poly_list[a]->mult( *(poly_list[b]) );
+  /*Polynomial retVal = poly_list[a]->mult( *(poly_list[b]) );
   if( poly_list[c] == NULL )
     poly_list[c] = new Polynomial( retVal );
   else
-    poly_list[c]->copy( retVal );
+  poly_list[c]->copy( retVal ); */
+  if( poly_list[c] == NULL ) poly_list[c] = new Polynomial;
+  poly_list[c]->copy( poly_list[a]->mult( *(poly_list[b] ) ) );
 
 #ifdef _RSLT_
   cout << "Result (mult): " << *(poly_list[c]) << endl;
@@ -316,7 +322,7 @@ void eval( char * line ) {
 	{
 	  num[index] = '\0';
 	  n = atoi( num );
-	  line[SLEN - 1] = '\0'; // guarantee that it is a C-string
+	  line[SLEN - 3] = '\0'; // guarantee that it is a C-string
 	  line += (i + 1);
 	  strcpy( pnt, line );
 	  point = atoi( pnt );
@@ -360,7 +366,7 @@ void diff( char * line ) {
 	{
 	  num1[index] = '\0';
 	  n1 = atoi( num1 );
-	  line[SLEN - 1] = '\0'; // guarantee is c-string
+	  line[SLEN - 3] = '\0'; // guarantee is c-string
 	  line += (i + 1);
 	  strcpy( num2, line );
 	  n2 = atoi( num2 );
@@ -383,8 +389,8 @@ void diff( char * line ) {
   if( poly_list[n1] == NULL ) return;
   if( poly_list[n2] == NULL ) poly_list[n2] = new Polynomial;
 
-  Polynomial retVal = poly_list[n1]->differentiate();
-  poly_list[n2]->copy( retVal );
+  //Polynomial retVal = poly_list[n1]->differentiate();
+  poly_list[n2]->copy( poly_list[n1]->differentiate() );
 
 #ifdef _RSLT_
   cout << "Result (diff): " << *(poly_list[n2]) << endl;
@@ -398,7 +404,7 @@ void integ( char * line ) {
 
   int n1 = 0, n2 = 0, index = 0;
   char num1[SLEN], num2[SLEN];
-  line += 2; // go past the 'D' at the beginning
+  line += 2; // go past the 'I' at the beginning
 
   for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
     {
@@ -406,7 +412,7 @@ void integ( char * line ) {
 	{
 	  num1[index] = '\0';
 	  n1 = atoi( num1 );
-	  line[SLEN - 1] = '\0'; // guarantee is c-string
+	  line[SLEN - 3] = '\0'; // guarantee is c-string
 	  line += (i + 1);
 	  strcpy( num2, line );
 	  n2 = atoi( num2 );
@@ -428,9 +434,8 @@ void integ( char * line ) {
   if( INVALID(n1) || INVALID(n2) ) return;
   if( poly_list[n1] == NULL ) return;
   if( poly_list[n2] == NULL ) poly_list[n2] = new Polynomial;
-
-  Polynomial retVal = poly_list[n1]->integrate();
-  poly_list[n2]->copy( retVal );
+  //Polynomial retVal = poly_list[n1]->integrate();
+  poly_list[n2]->copy( poly_list[n1]->integrate() );
 
 #ifdef _RSLT_
   cout << "Result (integ): " << *(poly_list[n2]) << endl;
@@ -439,10 +444,64 @@ void integ( char * line ) {
 
 void div( char * line ) {
 #ifdef _FUNC_HDR_
-  cout << "div(): NOT IMPLEMENTED" << endl;
+  cout << "div() of: ";
 #endif
 
-  //Polynomial retVal;
+  line += 2;
+  char curr[SLEN];
+  memset( curr, 0, SLEN );
+  int index = 0;
+  
+  int a = 0, b = 0, c = 0;
+  bool mode = true;
+
+  for( int i = 0; (i < SLEN) && (line[i] != '\0'); ++i )
+    {
+      if( (line[i] == ' ') )
+	{
+	  curr[index] = '\0';
+	  if( mode )
+	    {
+	      a = atoi( curr );
+	      mode = false;
+	    }
+	  else if( !mode )
+	    {
+	      b = atoi( curr );
+	    }
+	  index = 0;
+	}
+      else
+	{
+	  curr[index] = line[i];
+	  index++;
+	}
+    }
+  
+  curr[SLEN - 1] = '\0';
+  c = atoi( curr );
+
+  a--; b--; c--;
+
+  if( INVALID(a) || INVALID(b) || INVALID(c) ) return;
+  if( poly_list[a] == NULL ) return;
+  if( poly_list[b] == NULL ) return;
+
+#ifdef _FUNC_HDR_
+  cout << "#" << (a + 1) << " ( " << *(poly_list[a]) << ") by #" << (b + 1) << " ( " << *(poly_list[b]) << ")" << endl;
+#endif
+
+  //Polynomial retVal = poly_list[a]->div( *(poly_list[b]) );
+  //if( poly_list[c] == NULL )
+  //  poly_list[c] = new Polynomial( retVal );
+  //else
+  //  poly_list[c]->copy( retVal );
+  if( poly_list[c] == NULL ) poly_list[c] = new Polynomial;
+  poly_list[c]->copy( poly_list[a]->div( *(poly_list[b]) ) );
+
+#ifdef _RSLT_
+  cout << "Result (div): " << *(poly_list[c]) << endl;
+#endif
 }
 
 void read( char * line ) {
@@ -470,11 +529,15 @@ void read( char * line ) {
     }
 
   line += (i + 1);
+  n--;
 
   if( INVALID(n) ) return;
 
-  if( poly_list[n] == NULL )
-    delete poly_list[n];
+  if( poly_list[n] != NULL )
+    {
+      delete poly_list[n];
+      poly_list[n] = NULL;
+    }
 
   poly_list[n] = new Polynomial( line );
 
@@ -494,7 +557,10 @@ void print( char * line ) {
 #endif
   n--;
   if( INVALID(n) ) return;
-  if( poly_list[n] == NULL ) return;
+  if( poly_list[n] == NULL ) {
+    cout << "0" << endl;
+    return;
+  }
 
   cout << *(poly_list[n]) << endl;
 }
@@ -568,7 +634,7 @@ void testPrint() {
   aPoly.addTerm( 10, 5 );
   aPoly.addTerm( 15, 0 );
   aPoly.addTerm( -14, 3 );
-  cout << "Result :";
+  cout << "Result : ";
   aPoly.print( cout );
   cout << "\nCorrect: 10x^5 - 14x^3 + 15" << endl;
   cout << "End testPrint()\n\n" << endl;
@@ -592,7 +658,7 @@ void testAdd() {
   cout << endl;
 
   Polynomial cPoly = aPoly.add( bPoly );
-  cout << "Result :";
+  cout << "Result : ";
   cPoly.print( cout );
   cout << "\nCorrect: 24x^5 - 14x^3 + 20x^2 + 28" << endl;
 
@@ -607,7 +673,7 @@ void testAdd() {
   e.addTerm( -10, 0 );
   Polynomial f;
   f = ( d.add( e ) );
-  cout << "Result :";
+  cout << "Result : ";
   f.print( cout );
   cout << "\nCorrect: 12x^6 + 15x^5 - 10x" << endl;
 
@@ -629,7 +695,28 @@ void testSub() {
   cout << "a: " << a << endl;
   cout << "b: " << b << endl;
   cout << "Result : " << a.sub(b) << endl;
-  cout << "Correct: - 25x^8 + 5.5x^5 + 4.4x^4 - 1.7x^3 + 6.2x^2 + 4x" << endl;
+  cout << "Correct: -25x^8 + 5.5x^5 + 4.4x^4 - 1.7x^3 + 6.2x^2 + 4x" << endl;
+  cout << endl;
+
+  Polynomial c;
+  c.addTerm( 1, 3 );
+  c.addTerm( 6, 2 );
+  c.addTerm( 11, 1 );
+  c.addTerm( 6, 0 );
+  Polynomial d;
+  d.addTerm( 1, 3 );
+  d.addTerm( 3, 2 );
+  Polynomial e = c.sub( d );
+  cout << "( " << c << ") - ( " << d << "):" << endl;
+  cout << "Result : " << e << endl;
+  cout << "Correct: 3x^2 + 11x + 6" << endl;
+  Polynomial f;
+  f.addTerm( 3, 2 );
+  f.addTerm( 9, 1 );
+  cout << "( " << e << ") - ( " << f << "):" << endl;
+  e = e.sub( f );
+  cout << "Result : " << e << endl;
+  cout << "Correct: 2x + 6" << endl;
   cout << "End testSub()\n\n" << endl;
 }
 
@@ -642,7 +729,7 @@ void testMult() {
   b.addTerm( 2, 0 );
   cout << "a: " << a << endl;
   cout << "b: " << b << endl;
-  cout << "Result :" << a.mult( b ) << endl;
+  cout << "Result : " << a.mult( b ) << endl;
   cout << "Correct: 24x^2 + 24x + 6" << endl;
   cout << "end testMult()\n\n" << endl;
 }
@@ -674,7 +761,7 @@ void testDiff() {
   cout << "a: " << a << endl;
   cout << "Differentiating..." << endl;
   Polynomial b = a.differentiate();
-  cout << "Result :" << b << endl;
+  cout << "Result : " << b << endl;
   cout << "Correct: 5x^4 - 4x^3 + 9x^2 + 8x + 5" << endl;
   cout << "End testDiff()\n\n" << endl;
 }
@@ -691,13 +778,26 @@ void testIntg() {
   cout << "a: " << a << endl;
   cout << "Integrating..." << endl;
   Polynomial b = a.integrate();
-  cout << "Result :" << b << endl;
-  cout << "Correct: 0.1667x^6 - 0.2x^5 + 0.75x^4 + 1.3333x^3 + 2.5x^2 + 250x" << endl;
+  cout << "Result : " << b << endl;
+  cout << "Correct: 0.166667x^6 - 0.2x^5 + 0.75x^4 + 1.33333x^3 + 2.5x^2 + 250x" << endl;
   cout << "End testIntg()\n\n" << endl;
 }
 
 void testDiv() {
   cout << "testDiv()" << endl;
+
+  Polynomial a, b;
+  a.addTerm( 1, 3 );
+  a.addTerm( 6, 2 );
+  a.addTerm( 11, 1 );
+  a.addTerm( 6, 0 );
+
+  b.addTerm( 1, 1 );
+  b.addTerm( 3, 0 );
+  cout << "Dividing ( " << a << ") by ( " << b << ")" << endl;
+  Polynomial c = a.div(b);
+  cout << "Result : " << c << endl;
+  cout << "Correct: x^2 + 3x + 2" << endl;
   cout << "End testDiv()\n\n" << endl;
 }
 
@@ -715,7 +815,7 @@ void testPolyConstr() {
   cout << "testPolyConstr()" << endl;
   char line[] = "6 3 5 2 3 1 1 0";
   Polynomial a( line );
-  cout << "Result :" << a << endl;
+  cout << "Result : " << a << endl;
   cout << "Correct: " << "6x^3 + 5x^2 + 3x + 1" << endl;
   cout << "End testPolyConstr()\n\n" << endl;
 }

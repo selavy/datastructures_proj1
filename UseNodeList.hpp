@@ -4,6 +4,10 @@
 #include "MyStd.hpp"
 #include "Node.hpp"
 
+#ifndef _MMEM_CHECK_
+//#define _MMEM_CHECK_
+#endif
+
 namespace AllocationPolicies
 {
 
@@ -24,11 +28,15 @@ namespace AllocationPolicies
 	{
 	  Node<T> * head = _head;
 	  _head = _head->next();
-	  //if( head->_data != NULL )
-	  //  delete head->_data;
+	  if( head->_data != NULL )
+	    delete head->_data;
 	  head->_data = new T(val);
 	  head->_next = nnode;
 	  head->_prev = pnode;
+#ifdef _MMEM_CHECK_
+	  cout << "Returning node #" << head->id << " from the free store" << endl;
+	  printFreeStore();
+#endif
 	  return head;
 	}
     }
@@ -41,23 +49,51 @@ namespace AllocationPolicies
       return newNode( val, NULL, NULL );
     }
 
+#ifdef _MMEM_CHECK_
+    static void printFreeStore() {
+      Node<T> * node = _head;
+      int i = 0;
+      cout << "Free store: ";
+      while( node != NULL )
+	{
+	  cout << node->id << " ";
+	  node = node->next();
+	  ++i;
+	}
+      cout << endl;
+      int sze = sizeof(Node<T>);
+      cout << i << " nodes allocated accounting for: " << i * sze << " bytes." << endl;
+    }
+#endif
+    
     static void removeNode( Node<T> * node )
     {
+#ifdef _MMEM_CHECK_
+      cout << "Adding node #" << node->id << " to the free store; ";
+#endif
       node->_next = NULL;
       node->_prev = NULL;
-      //if( node->_data != NULL )
-      //delete node->_data;
+
+      if( node->_data != NULL )
+	{
+	  delete node->_data;
+	  node->_data = NULL;
+	}
 
       if( _head == NULL )
 	{
 	  _head = node;
-	  _head->_next = NULL; // just in case, but probably unnecessary
 	}
       else
 	{
 	  node->_next = _head;
 	  _head = node;
 	}
+
+#ifdef _MMEM_CHECK_
+      cout << "Head is now: #" << _head->id << endl;
+      printFreeStore();
+#endif
     }
 
     /* I have to add this hacky function because otherwise
@@ -66,14 +102,20 @@ namespace AllocationPolicies
        program */
     static void deleteFreeStore()
     {
+#ifdef _MMEM_CHECK_
+      cout << "deleteFreeStore()" << endl;
+#endif
       Node<T> * node = _head;
       Node<T> * tmp;
+      
       while( node != NULL )
 	{
 	  tmp = node;
 	  delete node;
 	  node = tmp->next();
 	}
+
+      _head = NULL;
     }
 
     static Node<T> * _head;

@@ -9,6 +9,10 @@ namespace DeallocationPolicies
     {
       delete node;
     }
+
+    static void deleteFreeStore() {
+      return;
+    }
   };
 }
 

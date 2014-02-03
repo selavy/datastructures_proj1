@@ -64,7 +64,7 @@ namespace LinkedList {
       cout << endl;
     }
  
-    bool isEmpty() {
+    bool isEmpty() const {
       return (_head == NULL) ? true : false;
     }
     
@@ -100,10 +100,11 @@ namespace LinkedList {
 
       /* putting the node at the end of the list */
       node->_next = AllocationPolicy<T>::newNode( val, NULL, node ); /* new Node<T>( val ); */
+      _begin.setIter( _head );
       return;
     } /* end insert() */
 
-    const T& get( int index ) {
+    const T& get( int index ) const {
       if( isEmpty() ) throw Exception("Tried to access data in empty list");
       if( index < 0 ) throw Exception("Tried to access with negative position");
 
@@ -176,11 +177,11 @@ namespace LinkedList {
 	  }
       }
 
-      const T& getData() {
+      const T& getData() const {
 	return _iter->data();
       }
 
-      Node<T> * getIter() {
+      Node<T> * getIter() const {
 	return _iter;
       }
 
@@ -266,6 +267,7 @@ namespace LinkedList {
 	next->_prev = prev;
 
       AllocationPolicy<T>::removeNode( node );
+      _begin.setIter(_head);
     }
 
     void remove( int index ) {
@@ -291,6 +293,7 @@ namespace LinkedList {
 	}
 
       _head = NULL;
+      _begin.setIter(_head);
     }
 
   private:
