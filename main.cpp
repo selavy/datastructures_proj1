@@ -602,7 +602,6 @@ void printAll() {
 	  cout << *(poly_list[i]) << endl;
 	}
     }
-  cout << endl;
 }
 
 #ifdef _UNIT_TESTS_
