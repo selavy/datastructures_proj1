@@ -389,7 +389,6 @@ void diff( char * line ) {
   if( poly_list[n1] == NULL ) return;
   if( poly_list[n2] == NULL ) poly_list[n2] = new Polynomial;
 
-  //Polynomial retVal = poly_list[n1]->differentiate();
   poly_list[n2]->copy( poly_list[n1]->differentiate() );
 
 #ifdef _RSLT_
