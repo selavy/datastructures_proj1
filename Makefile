@@ -18,7 +18,6 @@ Exception.o: Exception.hpp Exception.cpp
 # tests
 test: $(TESTS)
 test_add: proj1
-	echo "Checking addition functionality..."
 	./proj1 test_add.txt > out_add.txt
 	diff -b -B out_add.txt correct_test_add.txt
 test_mult: proj1

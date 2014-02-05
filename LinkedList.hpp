@@ -11,6 +11,10 @@ using namespace std;
 
 namespace LinkedList {
 
+  /* This is a class built using Policy-based design.    */
+  /* Using templates, the user can specify how s/he      */
+  /* would like the class to allocate and de-allocate    */
+  /* memory as well as how to insert nodes into the list */
   template
   <
     class T,
@@ -19,6 +23,7 @@ namespace LinkedList {
   >
   class LinkedList {
   public:
+    /* default constructor, initialize all iterators */
     explicit LinkedList() {
       _head = NULL;
       _begin.setStatus(iterator::BEGIN);
@@ -26,10 +31,12 @@ namespace LinkedList {
       _end.setStatus(iterator::END);
     } /* end LinkedList() */
 
+    /* copy constructor */
     LinkedList( const LinkedList& other ) {
       copy( other );
     }
 
+    /* copy method to copy contents of linked list to another linked list */
     void copy( const LinkedList& other ) {
       clear();
       Node<T> * node = other._head;
@@ -42,10 +49,12 @@ namespace LinkedList {
       _begin.setIter(_head);
     }
 
+    /* deletes all nodes in the list */
     virtual ~LinkedList() {
       clear();
     } /* end ~LinkedList() */
 
+    /* just a debugging method so I can see the list */
     void printVisual() {
       Node<T> * node = _head;
       while( node != NULL )
@@ -64,10 +73,13 @@ namespace LinkedList {
       cout << endl;
     }
  
+    /* return true is the list is empty */
     bool isEmpty() const {
       return (_head == NULL) ? true : false;
     }
     
+    /* insert a value based on the SortingPolicy */
+    /* node memory is allocated based on the AllocationPolicy */
     void insert( const T& val ) {
       if( _head == NULL )
 	{
@@ -102,8 +114,9 @@ namespace LinkedList {
       node->_next = AllocationPolicy<T>::newNode( val, NULL, node ); /* new Node<T>( val ); */
       _begin.setIter( _head );
       return;
-    } /* end insert() */
+    } 
 
+    /* returns a const ref to the node at position i (indexed from 0) */
     const T& get( int index ) const {
       if( isEmpty() ) throw Exception("Tried to access data in empty list");
       if( index < 0 ) throw Exception("Tried to access with negative position");
@@ -119,8 +132,9 @@ namespace LinkedList {
       else return node->data();
     } /* end get() */
 
-    void set( const T& val, int index ) { /* TODO */ }
-
+    /* return the number of elements in the list */
+    /* not efficient because no counter is kept, */
+    /* so must iterate through entire list       */
     int size() {
       Node<T> * n = _head;
       int count = 0;
@@ -133,11 +147,13 @@ namespace LinkedList {
       return count;
     }
 
+    /* same as size() */
     int length() {
       return size();
     }
 
     /************************************************/
+    /* Iterator class for the LinkedList class */
     class iterator
     {
     public:
@@ -156,6 +172,7 @@ namespace LinkedList {
       virtual ~iterator() {
       }
       
+      /* move the iterator forward one step */
       void forward() {
 	if( _status == NOP )
 	  return;
@@ -185,6 +202,10 @@ namespace LinkedList {
 	return _iter;
       }
 
+      Node<T> * operator*() const {
+	return getIter();
+      }
+
       void setIter(Node<T> * node) {
 	_iter = node;
         _status = (node != NULL) ? MIDDLE : END;
@@ -194,6 +215,7 @@ namespace LinkedList {
 	_status = status;
       }
 
+      /* test if the iterators are pointing to the same thing */
       typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& operator=( const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& rhs ) {
 	if( this == &rhs )
 	  return *this;
@@ -227,6 +249,7 @@ namespace LinkedList {
 	return t;
       }
 
+      /* same thing as getIter() and operator*() */
       Node<T> * getNode() {
 	return _iter;
       }
@@ -237,14 +260,17 @@ namespace LinkedList {
     };
     /************************************************/
 
+    /* returns the iterator to the beginning of the list */
     const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& begin() const {
       return _begin;
     }
 
+    /* returns the iterator to the end of the list */
     const typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& end() const {
       return _end;
     }
 
+    /* removes a node given an iterator to the given node */
     void remove( typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator& it ) {
       Node<T> * node = it.getIter();
       if( node == NULL ) return;
@@ -270,6 +296,8 @@ namespace LinkedList {
       _begin.setIter(_head);
     }
 
+    /* traverses the list until the given index then passes the iterator to the other
+       remove function */
     void remove( int index ) {
       if( index < 0 ) return;
       typename LinkedList<T, SortingPolicy, AllocationPolicy>::iterator it = begin();
@@ -279,6 +307,7 @@ namespace LinkedList {
       remove(it);
     }
 
+    /* remove all nodes from the list */
     void clear() {
       Node<T> * node = _head;
       Node<T> * tmp;

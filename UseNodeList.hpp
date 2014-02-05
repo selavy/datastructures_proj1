@@ -65,7 +65,8 @@ namespace AllocationPolicies
       cout << i << " nodes allocated accounting for: " << i * sze << " bytes." << endl;
     }
 #endif
-    
+
+    /* 'Deletes' a node by adding it to the free store */
     static void removeNode( Node<T> * node )
     {
 #ifdef _MMEM_CHECK_

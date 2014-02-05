@@ -24,6 +24,8 @@ public:
     > poly_t;
 
 public:
+  /* almost always make default constructor and single argument constructors */
+  /* explicit to stop implicit type conversion */
   explicit Polynomial();
   explicit Polynomial( char * poly );
   Polynomial( const Polynomial& other );
@@ -39,14 +41,11 @@ public:
   const Polynomial sub( const Polynomial& rhs ) const;
   const Polynomial mult( const Polynomial& rhs ) const;
   const Polynomial div( const Polynomial& rhs ) const;
-  double eval( int point );
+  double eval( double point );
   const Polynomial differentiate();
   const Polynomial integrate();
-  void clear();
   void print( std::ostream& os ) const;
   
-  static void deleteFreeStore();
-
   Polynomial& operator=( const Polynomial& rhs );
   friend std::ostream& operator<<( std::ostream& os, const Polynomial& rhs );
 

@@ -49,6 +49,8 @@ void testPolyConstr();
 
 int main( int argc, char ** argv )
 {
+  /* If you want to run the unit tests, then uncomment the line #define _UNIT_TESTS_ */
+  /* Otherwise the regular program is run */
 #ifdef _UNIT_TESTS_
   testPolyConstr();
   testCopy();
@@ -63,6 +65,9 @@ int main( int argc, char ** argv )
   testRemove();
 #else
 
+  /* the main program */
+  /* try to get the input file name from the command line */
+  /* if not available then ask for it from the user */
   ifstream in;
   if( argc == 2 )
     {
@@ -107,6 +112,8 @@ int main( int argc, char ** argv )
 #ifdef _INPUT_TEST_
       cout << "line = " << line << endl;
 #endif
+      /* the polynomial class supports a constuctor that takes a c-string so just let it handle initializing itself */
+      /* NB. Still assuming that the input file is correctly formatted */
       poly_list[i] = new Polynomial( line );
     }
 
@@ -115,8 +122,8 @@ int main( int argc, char ** argv )
   printAll();
 #endif
 
+  /* main loop for reading in the file and executing the commands */
   bool quit = false;
-
   while( in.good() && !quit )
     {
       char * line = new char[SLEN]; // can NOT pass non-malloc'd c-string to getline
@@ -187,6 +194,9 @@ int main( int argc, char ** argv )
 	}
     }
 
+  // this function must be called to remove the list of free store nodes
+  // kind of awkward, but no easier way to do this since it is static
+  // and c++ handling of the static keyword is awkward
   AllocationPolicies::UseNodeList<Term>::deleteFreeStore();
       
 #endif
@@ -194,6 +204,8 @@ int main( int argc, char ** argv )
   return 0;
 }
 
+/* reads from a c-string, and executes the Polynomial add function
+   on 2 polynomials storing the result in a third */
 void add( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "add()" << endl;
@@ -249,6 +261,8 @@ void add( char * line ) {
 #endif
 }
 
+/* reads from a c-string, and executes the Polynomial mult function
+   on 2 polynomials stroing the result in a third */
 void mult( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "mult()" << endl;
@@ -305,14 +319,17 @@ void mult( char * line ) {
 #endif
 }
 
+/* reads from a c-string, and executes the Polynomial eval function
+   printing the result to the stdout */
 void eval( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "eval()" << endl;
 #endif
 
-  int n = 0, point = 0, index = 0;
+  int n = 0, index = 0;
   char num[SLEN];
   char pnt[SLEN];
+  double point;
 
   line += 2; // go past the 'E' at the beginning of line 
 
@@ -325,7 +342,7 @@ void eval( char * line ) {
 	  line[SLEN - 3] = '\0'; // guarantee that it is a C-string
 	  line += (i + 1);
 	  strcpy( pnt, line );
-	  point = atoi( pnt );
+	  point = atof( pnt );
 	  break;
 	}
       else
@@ -351,6 +368,8 @@ void eval( char * line ) {
   return;
 }
   
+/* reads from a c-string an executes the Polynomial differentiate function
+ storing the result in a second Polynomial */
 void diff( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "diff(): ";
@@ -396,6 +415,8 @@ void diff( char * line ) {
 #endif
 }
 
+/* reads from a c-string to execute the Polynomial integration function
+   storing the result in a second Polynomial */
 void integ( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "integ()" << endl;
@@ -441,6 +462,8 @@ void integ( char * line ) {
 #endif
 }
 
+/* Reads from a c-string to execute the Polynomial div function
+   storing the result in a third polynomial */
 void div( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "div() of: ";
@@ -490,11 +513,6 @@ void div( char * line ) {
   cout << "#" << (a + 1) << " ( " << *(poly_list[a]) << ") by #" << (b + 1) << " ( " << *(poly_list[b]) << ")" << endl;
 #endif
 
-  //Polynomial retVal = poly_list[a]->div( *(poly_list[b]) );
-  //if( poly_list[c] == NULL )
-  //  poly_list[c] = new Polynomial( retVal );
-  //else
-  //  poly_list[c]->copy( retVal );
   if( poly_list[c] == NULL ) poly_list[c] = new Polynomial;
   poly_list[c]->copy( poly_list[a]->div( *(poly_list[b]) ) );
 
@@ -503,6 +521,7 @@ void div( char * line ) {
 #endif
 }
 
+/* Reads in a Polynomial from a c-string */
 void read( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "read(): " << line << endl;
@@ -564,6 +583,7 @@ void print( char * line ) {
   cout << *(poly_list[n]) << endl;
 }
 
+/* Reads a c-string to remove a polynomial */
 void remove( char * line ) {
 #ifdef _FUNC_HDR_
   cout << "remove(): " << line << endl;
@@ -586,6 +606,8 @@ void remove( char * line ) {
 #endif
 }
 
+/* Prints all the polynomials in the poly_list array,
+   If a pointer is NULL, then it is skipped */
 void printAll() {
 #ifdef _FUNC_HDR_
   cout << "printAll()" << endl;
@@ -603,6 +625,9 @@ void printAll() {
     }
 }
 
+/*************************************************************************************/
+/* The functions below are all unit tests to test the Polynomial functions           */
+/*************************************************************************************/
 #ifdef _UNIT_TESTS_
 void testCopy() {
   //cout << "Test copy" << endl;
